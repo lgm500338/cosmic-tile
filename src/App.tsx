@@ -140,7 +140,7 @@ export default function App() {
   const [photoInfo, setPhotoInfo] = useState<BackgroundManifestEntry | null>(null);
 
   // 외계인이 날아가는 효과 위치
-  const [alienFly, setAlienFly] = useState<{ id: number; x: number; y: number } | null>(null);
+  const [alienFly, setAlienFly] = useState<{ id: number; x: number; y: number; kind: 'cover' | 'vanish' | 'mystery' } | null>(null);
 
   // 부스터 안내 토스트 (예: 코인 부족)
   const [boosterToast, setBoosterToast] = useState<string | null>(null);
@@ -366,6 +366,30 @@ export default function App() {
     // Ensure audio context is alive immediately on click
     soundManager.resumeContext();
 
+    // ① 덮개 외계인: 외계인만 사라지고 그 자리에 천체가 드러난다 / ② 사라지는 외계인: 통째로 사라진다 (둘 다 슬롯 안 씀)
+    if (tile.isAlien && (tile.alienKind === 'cover' || tile.alienKind === 'vanish')) {
+      const el = document.querySelector(`[data-tile-id="${tile.id}"]`);
+      if (el) {
+        const r = el.getBoundingClientRect();
+        setAlienFly({ id: Date.now(), x: r.left + r.width / 2, y: r.top + r.height / 2, kind: tile.alienKind });
+        window.setTimeout(() => setAlienFly(null), 900);
+      }
+      soundManager.playWhoosh();
+      const kind = tile.alienKind;
+      setBoardTiles(prev =>
+        recalculateOcclusion(
+          prev.map(b =>
+            b.id !== tile.id
+              ? b
+              : kind === 'cover'
+              ? { ...b, isAlien: false, alienKind: undefined }
+              : { ...b, isCollected: true }
+          )
+        )
+      );
+      return;
+    }
+
     if (dockTiles.length >= maxSlots) {
       soundManager.playDefeat();
       setShowGameOver(true);
@@ -401,19 +425,19 @@ export default function App() {
       return [...prevDock, newDockTile];
     });
 
-    // 외계인 타일: 누르는 순간 외계인이 날아가고 숨겨진 천체가 드러난다
+    // 외계인 타일: 누르는 순간 외계인이 날아간다
     if (tile.isAlien) {
       const el = document.querySelector(`[data-tile-id="${tile.id}"]`);
       if (el) {
         const r = el.getBoundingClientRect();
-        setAlienFly({ id: Date.now(), x: r.left + r.width / 2, y: r.top + r.height / 2 });
+        setAlienFly({ id: Date.now(), x: r.left + r.width / 2, y: r.top + r.height / 2, kind: tile.alienKind || 'cover' });
         window.setTimeout(() => setAlienFly(null), 900);
       }
     }
 
     setBoardTiles(prevBoard => {
       // 한 번 정체가 드러난 타일은 되돌리기로 보드에 돌아와도 천체로 보인다
-      const updated = prevBoard.map(b => (b.id === tile.id ? { ...b, isCollected: true, isAlien: false } : b));
+      const updated = prevBoard.map(b => (b.id === tile.id ? { ...b, isCollected: true, isAlien: false, alienKind: undefined } : b));
       return recalculateOcclusion(updated);
     });
 
@@ -538,7 +562,8 @@ export default function App() {
   useEffect(() => {
     if (boardTiles.length === 0 || showStageClear || showGameOver) return;
 
-    const remainingBoardCount = boardTiles.filter(t => !t.isCollected).length;
+    // 사라지는 외계인(장애물)은 남아 있어도 클리어로 본다
+    const remainingBoardCount = boardTiles.filter(t => !t.isCollected && t.alienKind !== 'vanish').length;
     // Both board and dock must be completely cleared with no pending match animations
     if (remainingBoardCount === 0 && dockTiles.length === 0 && clearingIdsRef.current.size === 0) {
       const victoryTimer = setTimeout(() => {
@@ -617,7 +642,7 @@ export default function App() {
 
       case 'wand': {
         // 타일 제거: 같은 천체 3개를 보드(덮인 타일 포함)와 슬롯에서 바로 없앤다
-        const remaining = boardTiles.filter(t => !t.isCollected);
+        const remaining = boardTiles.filter(t => !t.isCollected && t.alienKind !== 'vanish');
         if (remaining.length === 0 && dockTiles.length === 0) return;
 
         // 대상 천체: 슬롯에 가장 많이 쌓인 천체 → 없으면 지금 누를 수 있는 타일 중 하나
@@ -699,8 +724,8 @@ export default function App() {
     setIsVoiceEnabled(nextVoice);
   };
 
-  const remainingTilesCount = boardTiles.filter(t => !t.isCollected).length;
-  const totalTilesCount = boardTiles.length;
+  const remainingTilesCount = boardTiles.filter(t => !t.isCollected && t.alienKind !== 'vanish').length;
+  const totalTilesCount = boardTiles.filter(t => t.alienKind !== 'vanish').length;
 
   return (
     <div
@@ -709,7 +734,7 @@ export default function App() {
       <CosmicBackground themeId={themeId} levelNumber={levelNumber} onPhotoInfo={setPhotoInfo} />
 
       {/* Waterfall Particle Shower & Golden Combo Banner (Fixed z-[100] top layer) */}
-      {alienFly && <AlienFlyAway id={alienFly.id} x={alienFly.x} y={alienFly.y} />}
+      {alienFly && <AlienFlyAway id={alienFly.id} x={alienFly.x} y={alienFly.y} kind={alienFly.kind} />}
       {goldStream && (
         <GoldStream id={goldStream.id} x={goldStream.x} y={goldStream.y} comboCount={goldStream.combo} label={goldStream.label} />
       )}
@@ -916,8 +941,10 @@ export default function App() {
                 window.setTimeout(() => showBoosterToast(
                   levelNumber >= ALIEN_DEEP_LEVEL
                     ? (language === 'ko' ? '👽 외계인이 아래층 천체까지 숨기기 시작했어요!' : '👽 Aliens now hide tiles in lower layers too!')
-                    : (language === 'ko' ? '👽 외계인 침공! 눌러야 숨긴 천체가 드러나요' : '👽 Alien invasion! Tap to reveal the hidden body'),
-                  3800
+                    : (language === 'ko'
+                        ? '👽 외계인 침공! 초록: 누르면 천체가 드러나요 · UFO: 누르면 사라져요 · 물음표: 정체를 몰라요'
+                        : '👽 Alien invasion! Green: reveals a body · UFO: vanishes · ?: unknown until tapped'),
+                  5200
                 ), 2200);
               }
             } catch {

@@ -295,7 +295,8 @@ function tryAssign(
   quota: Map<string, number>,
   opt: AssignOptions,
   rand: () => number,
-  initialOpen: Array<{ type: string; count: number }> = []
+  initialOpen: Array<{ type: string; count: number }> = [],
+  obstacles: Set<number> = new Set()
 ): { types: string[]; overlapScore: number } | null {
   const n = slots.length;
   const remainingUppers = graph.uppers.map(u => u.length);
@@ -322,10 +323,15 @@ function tryAssign(
 
   // 정답 순서를 한 칸씩 만들어가며, "어느 타일을 치울지"와 "무슨 천체를 줄지"를 함께 고른다
   for (let step = 0; step < n; step++) {
-    type Option = { tile: number; kind: 'join' | 'new'; type: string; overlap: number; idx?: number; w: number };
+    type Option = { tile: number; kind: 'join' | 'new' | 'vanish'; type: string; overlap: number; idx?: number; w: number };
     const options: Option[] = [];
     const dockCount = open.reduce((sum, g) => sum + g.count, 0);
     for (const t of frontier) {
+      // 사라지는 외계인(장애물): 슬롯을 쓰지 않고 언제든 치울 수 있다
+      if (obstacles.has(t)) {
+        options.push({ tile: t, kind: 'vanish', type: VANISH_TYPE, overlap: 0, w: 3 });
+        continue;
+      }
       const f = seenAt[t];
       open.forEach((g, idx) => {
         // 묶음을 완성하지 않는 경우엔 슬롯 여유가 있어야 한다
@@ -361,6 +367,16 @@ function tryAssign(
 
     const t = choice.tile;
     types[t] = choice.type;
+    if (choice.kind === 'vanish') {
+      frontier.splice(frontier.indexOf(t), 1);
+      graph.lowers[t].forEach((low, k) => {
+        remainingUppers[low]--;
+        coveredArea[low] -= graph.lowerArea[t][k];
+        if (seenAt[low] < 0 && coveredArea[low] < SEEN_THRESHOLD) seenAt[low] = step + 1;
+        if (remainingUppers[low] === 0) frontier.push(low);
+      });
+      continue;
+    }
     if (!intervals.has(choice.type)) intervals.set(choice.type, []);
     intervals.get(choice.type)!.push([seenAt[t], step]);
     if (choice.kind === 'new') {
@@ -392,7 +408,8 @@ function assignSolvableTypes(
   rand: () => number,
   strict: boolean,
   budgetMs: number,
-  initialOpen: Array<{ type: string; count: number }> = []
+  initialOpen: Array<{ type: string; count: number }> = [],
+  obstacles: Set<number> = new Set()
 ): string[] | null {
   const graph = buildCoverGraph(slots);
   const started = Date.now();
@@ -401,13 +418,13 @@ function assignSolvableTypes(
     const o = { ...opt, maxVisible: opt.maxVisible + relax };
     for (let a = 0; a < o.attempts; a++) {
       if (Date.now() - started > budgetMs * (relax + 1)) break;
-      const res = tryAssign(slots, graph, quota, o, rand, initialOpen);
+      const res = tryAssign(slots, graph, quota, o, rand, initialOpen, obstacles);
       if (res) return res.types;
     }
   }
   if (strict) return null;
   // 최후의 안전장치: 규칙 없이 정답 순서만 보장
-  const res = tryAssign(slots, graph, quota, { maxVisible: 99, maxOpen: 6, attempts: 1 }, rand, initialOpen);
+  const res = tryAssign(slots, graph, quota, { maxVisible: 99, maxOpen: 6, attempts: 1 }, rand, initialOpen, obstacles);
   return res ? res.types : null;
 }
 
@@ -420,10 +437,14 @@ export function reshuffleBoardSolvable(tiles: BoardTile[], dockTypeIds: string[]
   const remaining = tiles.filter(t => !t.isCollected);
   if (remaining.length === 0) return tiles;
   const slots: SlotPos[] = remaining.map(t => ({ x: t.x, y: t.y, layer: t.layer }));
+  // 사라지는 외계인은 그대로 두고(장애물), 천체만 다시 배치한다
+  const obstacles = new Set(remaining.map((t, i) => (t.typeId === VANISH_TYPE ? i : -1)).filter(i => i >= 0));
 
   // 천체별 개수: 보드 + 슬롯은 항상 3의 배수
   const boardCount = new Map<string, number>();
-  remaining.forEach(t => boardCount.set(t.typeId, (boardCount.get(t.typeId) || 0) + 1));
+  remaining.forEach(t => {
+    if (t.typeId !== VANISH_TYPE) boardCount.set(t.typeId, (boardCount.get(t.typeId) || 0) + 1);
+  });
   const dockCount = new Map<string, number>();
   dockTypeIds.forEach(id => dockCount.set(id, (dockCount.get(id) || 0) + 1));
 
@@ -443,8 +464,8 @@ export function reshuffleBoardSolvable(tiles: BoardTile[], dockTypeIds: string[]
   // 섞기는 슬롯 여유를 최대로(6칸) 보고 정답 순서를 찾는다
   const opt = { ...difficulty, maxOpen: 6, preferSingle: true };
   const types =
-    assignSolvableTypes(slots, quota, opt, Math.random, true, 80, initialOpen) ||
-    assignSolvableTypes(slots, quota, opt, Math.random, false, 80, initialOpen);
+    assignSolvableTypes(slots, quota, opt, Math.random, true, 80, initialOpen, obstacles) ||
+    assignSolvableTypes(slots, quota, opt, Math.random, false, 80, initialOpen, obstacles);
   if (!types) return tiles;
 
   const byId = new Map(remaining.map((t, i) => [t.id, types[i]]));
@@ -452,23 +473,55 @@ export function reshuffleBoardSolvable(tiles: BoardTile[], dockTypeIds: string[]
 }
 
 /**
- * 외계인 침공: 일부 타일을 외계인이 가려서 누르기 전에는 정체를 알 수 없게 한다
- *  - 15~20레벨: 처음부터 누를 수 있는 위층 타일 중에서만 (판의 약 5%, 2~4개)
- *  - 21~49레벨: 아래층에 깔린 타일도 포함 (약 6%)
- *  - 50레벨~: 약 10%
- * 숨기기만 하므로 '반드시 풀 수 있는 판'은 그대로 유지된다.
+ * 외계인 침공 (15레벨부터) — 외계인 3종
+ *  ① cover   덮개 외계인: 누르면 외계인만 사라지고 그 자리에 천체가 드러난다 (슬롯 안 씀) — 가장 많음
+ *  ② vanish  사라지는 외계인: 밑에 천체가 없는 장애물. 누르면 그냥 사라진다 (슬롯 안 씀)
+ *  ③ mystery 정체불명 외계인: 누르면 슬롯으로 올라가면서 정체가 드러난다
+ *  - 15~20레벨: 처음부터 누를 수 있는 위층 타일에만
+ *  - 21레벨~: 아래층에 깔린 타일에도
+ * ②는 판을 만들 때 장애물 칸으로 따로 넣고, 그걸 포함해 '반드시 풀 수 있는 판'을 계산한다.
  */
 export const ALIEN_START_LEVEL = 15;
 export const ALIEN_DEEP_LEVEL = 21;
+export const VANISH_TYPE = 'alien_vanish';
+
+function vanishCount(levelNum: number): number {
+  if (levelNum < ALIEN_START_LEVEL) return 0;
+  if (levelNum < 50) return 3;
+  return 6;
+}
+
+/** 사라지는 외계인(장애물) 자리 고르기 — 15~20레벨은 처음부터 보이는 위층 칸에서만 */
+function pickObstacles(slots: SlotPos[], levelNum: number): Set<number> {
+  const k = vanishCount(levelNum);
+  if (k === 0) return new Set();
+  const topOnly = levelNum < ALIEN_DEEP_LEVEL;
+  const idx = slots.map((_, i) => i).filter(i => {
+    if (!topOnly) return true;
+    return !slots.some((s, j) => j !== i && s.layer > slots[i].layer && 1 - Math.abs(s.x - slots[i].x) > 0.05 && 1 - Math.abs(s.y - slots[i].y) > 0.05);
+  });
+  const chosen = idx.sort(() => Math.random() - 0.5).slice(0, k);
+  return chosen.length === k ? new Set(chosen) : new Set();
+}
+
 function assignAliens(tiles: BoardTile[], levelNum: number): BoardTile[] {
   if (levelNum < ALIEN_START_LEVEL) return tiles;
   const topOnly = levelNum < ALIEN_DEEP_LEVEL;
-  const pool = tiles.filter(t => (topOnly ? !t.isCovered : true));
-  const rate = levelNum < ALIEN_DEEP_LEVEL ? 0.05 : levelNum < 50 ? 0.06 : 0.1;
-  const count = Math.max(2, Math.min(topOnly ? 4 : 12, Math.round(tiles.length * rate), pool.length));
-  const shuffled = [...pool].sort(() => Math.random() - 0.5).slice(0, count);
-  const ids = new Set(shuffled.map(t => t.id));
-  return tiles.map(t => (ids.has(t.id) ? { ...t, isAlien: true } : t));
+  const pool = tiles.filter(t => t.typeId !== VANISH_TYPE && (topOnly ? !t.isCovered : true));
+  const n = tiles.length;
+  // 덮개 외계인이 가장 많이 나온다
+  const coverN = topOnly ? 5 : Math.max(5, Math.round(n * (levelNum < 50 ? 0.12 : 0.14)));
+  const mysteryN = topOnly ? 1 : Math.max(2, Math.round(n * (levelNum < 50 ? 0.03 : 0.04)));
+  const shuffled = [...pool].sort(() => Math.random() - 0.5);
+  // 물음표 외계인을 먼저 고르고(자리가 모자라도 빠지지 않게), 나머지로 덮개 외계인을 채운다
+  const mystery = new Set(shuffled.slice(0, mysteryN).map(t => t.id));
+  const cover = new Set(shuffled.slice(mysteryN, mysteryN + coverN).map(t => t.id));
+  return tiles.map(t => {
+    if (t.typeId === VANISH_TYPE) return { ...t, isAlien: true, alienKind: 'vanish' as const };
+    if (cover.has(t.id)) return { ...t, isAlien: true, alienKind: 'cover' as const };
+    if (mystery.has(t.id)) return { ...t, isAlien: true, alienKind: 'mystery' as const };
+    return t;
+  });
 }
 
 /** 레벨별 난이도 규칙 */
@@ -752,9 +805,12 @@ export function generateLevel(levelNum: number, currentThemeId?: ThemeId): {
   const baseTypesCount = uniqueTypesCount;
   let slots: SlotPos[] = [];
   let tripletCount = 0;
+  let obstacles: Set<number> = new Set();
   const prepareLayout = (variant: number) => {
     slots = generateLayoutSlots(levelNum, variant);
-    tripletCount = slots.length / 3;
+    obstacles = pickObstacles(slots, levelNum);
+    // 사라지는 외계인 칸은 천체가 아니므로 3개 묶음 수에서 뺀다 (장애물은 3의 배수 개)
+    tripletCount = (slots.length - obstacles.size) / 3;
     uniqueTypesCount = baseTypesCount;
     if (levelNum > 2) {
       const cap = getDifficulty(levelNum).maxVisible;
@@ -797,11 +853,11 @@ export function generateLevel(levelNum: number, currentThemeId?: ThemeId): {
       if (variant > 0) prepareLayout(variant);
       for (let extra = 0; extra <= 8 && !tileTypeIds; extra += 4) {
         availableTiles = pickTiles(Math.min(uniqueTypesCount + extra, tripletCount));
-        tileTypeIds = assignSolvableTypes(slots, makeQuota(availableTiles), difficulty, Math.random, true, 35);
+        tileTypeIds = assignSolvableTypes(slots, makeQuota(availableTiles), difficulty, Math.random, true, 35, [], obstacles);
       }
     }
     if (!tileTypeIds) {
-      tileTypeIds = assignSolvableTypes(slots, makeQuota(availableTiles), difficulty, Math.random, false, 60)!;
+      tileTypeIds = assignSolvableTypes(slots, makeQuota(availableTiles), difficulty, Math.random, false, 60, [], obstacles)!;
     }
   }
   const totalTiles = slots.length;

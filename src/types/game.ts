@@ -46,6 +46,8 @@ export interface BoardTile {
   isCollected: boolean;
   /** 외계인이 숨긴 타일: 누르기 전에는 어떤 천체인지 보이지 않는다 */
   isAlien?: boolean;
+  /** 외계인 종류: cover(덮개, 누르면 천체가 드러남) · vanish(사라짐, 밑에 천체 없음) · mystery(정체불명, 슬롯으로 올라감) */
+  alienKind?: 'cover' | 'vanish' | 'mystery';
 }
 
 export interface DockTile {

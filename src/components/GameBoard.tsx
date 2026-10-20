@@ -2,6 +2,7 @@ import React, { useMemo, useRef, useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { AppLanguage, BoardTile, TileThemeItem } from '../types/game';
 import { JellyTile } from './JellyTile';
+import { VANISH_PLACEHOLDER } from './AlienTile';
 
 interface GameBoardProps {
   tiles: BoardTile[];
@@ -136,7 +137,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
         {sortedTiles.map(tile => {
           if (tile.isCollected) return null;
 
-          const themeItem = tileThemeMap[tile.typeId];
+          const themeItem = tileThemeMap[tile.typeId] || (tile.alienKind === 'vanish' ? VANISH_PLACEHOLDER : undefined);
           if (!themeItem) return null;
 
           // Position relative to board bounding box with safe padding
@@ -170,6 +171,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
                 layer={tile.layer}
                 isCovered={tile.isCovered}
                 isAlien={tile.isAlien}
+                alienKind={tile.alienKind}
                 onClick={() => onTileClick(tile)}
                 size="md"
                 showTileText={showTileText}

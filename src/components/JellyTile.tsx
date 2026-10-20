@@ -3,12 +3,13 @@ import { motion } from 'motion/react';
 import { AppLanguage, TileThemeItem } from '../types/game';
 import { CELESTIAL_ENGLISH } from '../data/celestialEnglish';
 import { soundManager } from '../utils/audio';
-import { AlienFace } from './AlienTile';
+import { AlienFace, AlienKind, ALIEN_TILE_STYLE } from './AlienTile';
 
 interface JellyTileProps {
   item: TileThemeItem;
   isCovered?: boolean;
   isAlien?: boolean; // 외계인이 숨긴 타일
+  alienKind?: AlienKind;
   isInDock?: boolean;
   onClick?: () => void;
   size?: 'sm' | 'md' | 'lg';
@@ -69,6 +70,25 @@ const TIGHT_VIEWBOX: Record<string, string> = {
 };
 const vb = (symbolType: string) => TIGHT_VIEWBOX[symbolType] || '0 0 44 44';
 
+// 비슷해 보이던 천체들의 색을 확실히 다르게 (회청색 공 6개, 빨간 공 3개, 노란 공 3개, 주황 공 3개, 혜성 2개)
+const SYMBOL_TINT: Record<string, string> = {
+  mercury: 'sepia(0.7) saturate(0.9) brightness(0.72)', // 어두운 갈회색
+  ceres: 'grayscale(1) brightness(1.3) contrast(1.1)', // 밝은 은백색
+  deimos: 'sepia(1) saturate(1.4) hue-rotate(45deg) brightness(0.8)', // 올리브색
+  mimas: 'hue-rotate(-35deg) saturate(1.6) brightness(1.2)', // 얼음빛 청록
+  ganymede: 'sepia(1) saturate(1.3) hue-rotate(-35deg) brightness(0.7)', // 진한 밤색
+  charon: 'grayscale(0.85) brightness(0.95)', // 회색 + 붉은 극관
+  moon: 'saturate(0.25) brightness(1.18)', // 크림빛 달
+  makemake: 'hue-rotate(-25deg) saturate(0.75) brightness(0.62)', // 적갈색
+  mars: 'hue-rotate(24deg) saturate(0.9) brightness(0.88)', // 녹슨 주황색
+  betelgeuse: 'hue-rotate(-28deg) saturate(1.2)', // 분홍빛 적색 거성
+  venus: 'saturate(0.55) brightness(1.2)', // 연한 크림 노랑
+  vesta: 'grayscale(0.75) sepia(0.45) brightness(0.88)', // 회갈색 바위
+  miranda: 'grayscale(0.9) brightness(1.15)', // 회백색
+  borisov: 'hue-rotate(125deg) saturate(1.3)', // 보라·분홍 혜성
+  helix: 'hue-rotate(70deg) saturate(1.2)', // 노랑·보라 고리
+};
+
 // Custom rich vector graphic renderer for all 44 distinct celestial bodies
 export const renderTileGraphic = (symbolType: string, _isCovered: boolean = false, emoji: string = '✨', size: 'sm' | 'md' | 'lg' = 'md') => {
   // Retain identical vibrant colors whether in front or behind (user request 9: 타일 뒤에 있을 때 색이 달라지지 않도록 동일 유지)
@@ -81,7 +101,7 @@ export const renderTileGraphic = (symbolType: string, _isCovered: boolean = fals
     // --- 1. 수성과 금성 ---
     case 'mercury':
       return (
-        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: (SYMBOL_TINT[symbolType] ? SYMBOL_TINT[symbolType] + ' ' : '') + filterStyle, overflow: 'visible' }}>
           <circle cx="22" cy="22" r="15" fill="url(#grad_mercury)" />
           <circle cx="16" cy="18" r="3" fill="#64748b" opacity="0.75" />
           <circle cx="26" cy="24" r="3.8" fill="#64748b" opacity="0.65" />
@@ -99,7 +119,7 @@ export const renderTileGraphic = (symbolType: string, _isCovered: boolean = fals
 
     case 'venus':
       return (
-        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: (SYMBOL_TINT[symbolType] ? SYMBOL_TINT[symbolType] + ' ' : '') + filterStyle, overflow: 'visible' }}>
           <circle cx="22" cy="22" r="15" fill="url(#grad_venus)" />
           <path d="M 8 18 Q 22 22 36 17" stroke="#fef08a" strokeWidth="2.5" fill="none" opacity="0.85" />
           <path d="M 7 24 Q 22 28 37 23" stroke="#b45309" strokeWidth="2.8" fill="none" opacity="0.75" />
@@ -118,7 +138,7 @@ export const renderTileGraphic = (symbolType: string, _isCovered: boolean = fals
     // --- 2. 지구와 달, ISS ---
     case 'earth':
       return (
-        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: (SYMBOL_TINT[symbolType] ? SYMBOL_TINT[symbolType] + ' ' : '') + filterStyle, overflow: 'visible' }}>
           <circle cx="22" cy="22" r="15" fill="url(#grad_earth)" />
           <path d="M 14 16 Q 19 13 22 17 Q 24 22 19 25 Q 14 23 14 16 Z" fill="#22c55e" opacity="0.9" />
           <path d="M 23 20 Q 28 17 31 22 Q 29 27 25 28 Z" fill="#16a34a" opacity="0.9" />
@@ -136,7 +156,7 @@ export const renderTileGraphic = (symbolType: string, _isCovered: boolean = fals
 
     case 'moon':
       return (
-        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: (SYMBOL_TINT[symbolType] ? SYMBOL_TINT[symbolType] + ' ' : '') + filterStyle, overflow: 'visible' }}>
           <circle cx="22" cy="22" r="15" fill="url(#grad_moon)" />
           <circle cx="17" cy="17" r="3.2" fill="#d97706" opacity="0.4" />
           <circle cx="26" cy="20" r="2.2" fill="#d97706" opacity="0.35" />
@@ -155,7 +175,7 @@ export const renderTileGraphic = (symbolType: string, _isCovered: boolean = fals
 
     case 'iss':
       return (
-        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: (SYMBOL_TINT[symbolType] ? SYMBOL_TINT[symbolType] + ' ' : '') + filterStyle, overflow: 'visible' }}>
           {/* Main Module Truss */}
           <rect x="18" y="20" width="8" height="4" rx="1" fill="#e2e8f0" stroke="#475569" strokeWidth="0.8" />
           {/* Solar Arrays Left & Right */}
@@ -174,7 +194,7 @@ export const renderTileGraphic = (symbolType: string, _isCovered: boolean = fals
     // --- 3. 화성, 포보스, 데이모스 ---
     case 'mars':
       return (
-        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: (SYMBOL_TINT[symbolType] ? SYMBOL_TINT[symbolType] + ' ' : '') + filterStyle, overflow: 'visible' }}>
           <circle cx="22" cy="22" r="15" fill="url(#grad_mars)" />
           {/* Dark Maria & Canyons */}
           <path d="M 11 20 Q 18 24 23 20 Q 30 22 34 19 Q 32 26 22 28 Q 12 25 11 20 Z" fill="#881337" opacity="0.65" />
@@ -195,7 +215,7 @@ export const renderTileGraphic = (symbolType: string, _isCovered: boolean = fals
 
     case 'phobos':
       return (
-        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: (SYMBOL_TINT[symbolType] ? SYMBOL_TINT[symbolType] + ' ' : '') + filterStyle, overflow: 'visible' }}>
           {/* Irregular Potato Shape */}
           <path
             d="M 12 18 Q 15 10 26 12 Q 35 15 34 26 Q 31 34 20 33 Q 9 30 12 18 Z"
@@ -219,7 +239,7 @@ export const renderTileGraphic = (symbolType: string, _isCovered: boolean = fals
 
     case 'deimos':
       return (
-        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: (SYMBOL_TINT[symbolType] ? SYMBOL_TINT[symbolType] + ' ' : '') + filterStyle, overflow: 'visible' }}>
           {/* Smooth lumpy dusty asteroid */}
           <path
             d="M 14 20 Q 16 12 25 14 Q 33 17 31 25 Q 29 32 20 31 Q 12 28 14 20 Z"
@@ -241,7 +261,7 @@ export const renderTileGraphic = (symbolType: string, _isCovered: boolean = fals
     // --- 4. 소행성대: 세레스, 베스타, 팔라스, 베누 ---
     case 'ceres':
       return (
-        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: (SYMBOL_TINT[symbolType] ? SYMBOL_TINT[symbolType] + ' ' : '') + filterStyle, overflow: 'visible' }}>
           <circle cx="22" cy="22" r="14.5" fill="url(#grad_ceres)" />
           {/* Occator Crater Bright Salt Spot (신비로운 하얀 소금점) */}
           <circle cx="20" cy="19" r="3.2" fill="#ffffff" opacity="0.95" />
@@ -261,7 +281,7 @@ export const renderTileGraphic = (symbolType: string, _isCovered: boolean = fals
 
     case 'vesta':
       return (
-        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: (SYMBOL_TINT[symbolType] ? SYMBOL_TINT[symbolType] + ' ' : '') + filterStyle, overflow: 'visible' }}>
           {/* Irregular Rocky Protoplanet */}
           <path
             d="M 12 18 Q 18 10 28 12 Q 35 18 33 27 Q 29 34 19 33 Q 9 27 12 18 Z"
@@ -284,7 +304,7 @@ export const renderTileGraphic = (symbolType: string, _isCovered: boolean = fals
 
     case 'pallas':
       return (
-        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: (SYMBOL_TINT[symbolType] ? SYMBOL_TINT[symbolType] + ' ' : '') + filterStyle, overflow: 'visible' }}>
           <circle cx="22" cy="22" r="14.5" fill="url(#grad_pallas)" />
           <circle cx="16" cy="18" r="3.5" fill="#3b0764" opacity="0.75" />
           <circle cx="26" cy="24" r="3" fill="#3b0764" opacity="0.7" />
@@ -302,7 +322,7 @@ export const renderTileGraphic = (symbolType: string, _isCovered: boolean = fals
 
     case 'bennu':
       return (
-        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: (SYMBOL_TINT[symbolType] ? SYMBOL_TINT[symbolType] + ' ' : '') + filterStyle, overflow: 'visible' }}>
           {/* Diamond faceted spinning asteroid */}
           <polygon points="22,8 34,18 31,31 22,36 13,31 10,18" fill="url(#grad_bennu)" stroke="#0f766e" strokeWidth="1" />
           <polygon points="22,8 34,18 22,23" fill="#2dd4bf" opacity="0.6" />
@@ -321,7 +341,7 @@ export const renderTileGraphic = (symbolType: string, _isCovered: boolean = fals
     // --- 5. 목성과 갈릴레이 위성들 ---
     case 'jupiter':
       return (
-        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: (SYMBOL_TINT[symbolType] ? SYMBOL_TINT[symbolType] + ' ' : '') + filterStyle, overflow: 'visible' }}>
           <circle cx="22" cy="22" r="15" fill="url(#grad_jupiter)" />
           {/* Banded Gas Belts */}
           <path d="M 7 14 Q 22 17 37 14" stroke="#c2410c" strokeWidth="3" fill="none" opacity="0.85" />
@@ -343,7 +363,7 @@ export const renderTileGraphic = (symbolType: string, _isCovered: boolean = fals
 
     case 'io':
       return (
-        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: (SYMBOL_TINT[symbolType] ? SYMBOL_TINT[symbolType] + ' ' : '') + filterStyle, overflow: 'visible' }}>
           <circle cx="22" cy="22" r="14.5" fill="url(#grad_io)" />
           {/* Active Sulfur Volcanoes (화산 폭발 분화구) */}
           <circle cx="16" cy="18" r="3" fill="#b91c1c" stroke="#f59e0b" strokeWidth="1" />
@@ -364,7 +384,7 @@ export const renderTileGraphic = (symbolType: string, _isCovered: boolean = fals
 
     case 'europa':
       return (
-        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: (SYMBOL_TINT[symbolType] ? SYMBOL_TINT[symbolType] + ' ' : '') + filterStyle, overflow: 'visible' }}>
           <circle cx="22" cy="22" r="14.5" fill="url(#grad_europa)" />
           {/* Lineae Reddish Fractured Ice Cracks (얼음 균열선) */}
           <path d="M 8 16 Q 18 20 25 15 Q 31 18 36 24" stroke="#b45309" strokeWidth="1.2" fill="none" opacity="0.75" />
@@ -383,7 +403,7 @@ export const renderTileGraphic = (symbolType: string, _isCovered: boolean = fals
 
     case 'ganymede':
       return (
-        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: (SYMBOL_TINT[symbolType] ? SYMBOL_TINT[symbolType] + ' ' : '') + filterStyle, overflow: 'visible' }}>
           <circle cx="22" cy="22" r="15" fill="url(#grad_ganymede)" />
           <path d="M 10 18 Q 22 14 34 18 Q 28 26 18 25 Z" fill="#334155" opacity="0.7" />
           <circle cx="24" cy="28" r="3.5" fill="#1e293b" opacity="0.6" />
@@ -403,7 +423,7 @@ export const renderTileGraphic = (symbolType: string, _isCovered: boolean = fals
     case 'saturn':
     case 'saturn_h':
       return (
-        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: (SYMBOL_TINT[symbolType] ? SYMBOL_TINT[symbolType] + ' ' : '') + filterStyle, overflow: 'visible' }}>
           {/* Back Ring */}
           <ellipse cx="22" cy="22" rx="19" ry="6.5" fill="none" stroke="url(#ring_grad)" strokeWidth="3.8" strokeDasharray="30 40" strokeDashoffset="15" />
           {/* Planet Body */}
@@ -431,7 +451,7 @@ export const renderTileGraphic = (symbolType: string, _isCovered: boolean = fals
 
     case 'titan':
       return (
-        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: (SYMBOL_TINT[symbolType] ? SYMBOL_TINT[symbolType] + ' ' : '') + filterStyle, overflow: 'visible' }}>
           {/* Dense Orange Nitrogen Smog Atmosphere */}
           <circle cx="22" cy="22" r="15" fill="url(#grad_titan)" />
           {/* Methane Lake on top */}
@@ -449,7 +469,7 @@ export const renderTileGraphic = (symbolType: string, _isCovered: boolean = fals
 
     case 'enceladus':
       return (
-        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: (SYMBOL_TINT[symbolType] ? SYMBOL_TINT[symbolType] + ' ' : '') + filterStyle, overflow: 'visible' }}>
           <circle cx="22" cy="22" r="14.5" fill="url(#grad_enceladus)" />
           {/* South Polar Tiger Stripe Geysers (얼음 간헐천 분출) */}
           <path d="M 17 32 L 14 39" stroke="#38bdf8" strokeWidth="1.8" strokeLinecap="round" opacity="0.9" />
@@ -468,7 +488,7 @@ export const renderTileGraphic = (symbolType: string, _isCovered: boolean = fals
 
     case 'mimas':
       return (
-        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: (SYMBOL_TINT[symbolType] ? SYMBOL_TINT[symbolType] + ' ' : '') + filterStyle, overflow: 'visible' }}>
           <circle cx="22" cy="22" r="14.5" fill="url(#grad_mimas)" />
           {/* Giant Herschel Crater "Death Star Eye" */}
           <circle cx="18" cy="19" r="6" fill="#475569" stroke="#1e293b" strokeWidth="1.2" />
@@ -487,7 +507,7 @@ export const renderTileGraphic = (symbolType: string, _isCovered: boolean = fals
     // --- 7. 천왕성과 해왕성, 트리톤, 미란다 ---
     case 'uranus':
       return (
-        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: (SYMBOL_TINT[symbolType] ? SYMBOL_TINT[symbolType] + ' ' : '') + filterStyle, overflow: 'visible' }}>
           {/* Vertical Faint Ring */}
           <ellipse cx="22" cy="22" rx="6" ry="18" fill="none" stroke="#67e8f9" strokeWidth="1.5" opacity="0.7" />
           <circle cx="22" cy="22" r="12" fill="url(#grad_uranus)" />
@@ -504,7 +524,7 @@ export const renderTileGraphic = (symbolType: string, _isCovered: boolean = fals
 
     case 'neptune':
       return (
-        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: (SYMBOL_TINT[symbolType] ? SYMBOL_TINT[symbolType] + ' ' : '') + filterStyle, overflow: 'visible' }}>
           <circle cx="22" cy="22" r="15" fill="url(#grad_neptune)" />
           {/* Great Dark Spot storm */}
           <ellipse cx="25" cy="20" rx="4" ry="2.5" fill="#1e1b4b" opacity="0.8" />
@@ -524,7 +544,7 @@ export const renderTileGraphic = (symbolType: string, _isCovered: boolean = fals
 
     case 'triton':
       return (
-        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: (SYMBOL_TINT[symbolType] ? SYMBOL_TINT[symbolType] + ' ' : '') + filterStyle, overflow: 'visible' }}>
           <circle cx="22" cy="22" r="14.5" fill="url(#grad_triton)" />
           {/* Dark Nitrogen Geyser plumes */}
           <path d="M 15 28 L 13 23" stroke="#1e293b" strokeWidth="1.5" strokeLinecap="round" opacity="0.8" />
@@ -542,7 +562,7 @@ export const renderTileGraphic = (symbolType: string, _isCovered: boolean = fals
 
     case 'miranda':
       return (
-        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: (SYMBOL_TINT[symbolType] ? SYMBOL_TINT[symbolType] + ' ' : '') + filterStyle, overflow: 'visible' }}>
           <circle cx="22" cy="22" r="14.5" fill="url(#grad_miranda)" />
           {/* Verona Rupes 20km sheer cliff chevron lines */}
           <path d="M 10 20 L 22 28 L 34 19" stroke="#1e293b" strokeWidth="2" fill="none" opacity="0.8" />
@@ -561,7 +581,7 @@ export const renderTileGraphic = (symbolType: string, _isCovered: boolean = fals
     // --- 8. 카이퍼 벨트: 명왕성, 카론, 마케마케, 하우메아 ---
     case 'pluto':
       return (
-        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: (SYMBOL_TINT[symbolType] ? SYMBOL_TINT[symbolType] + ' ' : '') + filterStyle, overflow: 'visible' }}>
           <circle cx="22" cy="22" r="15" fill="url(#grad_pluto)" />
           {/* Sputnik Planitia Giant Cream-White Heart Glacier (하트 모양 빙하) */}
           <path
@@ -584,7 +604,7 @@ export const renderTileGraphic = (symbolType: string, _isCovered: boolean = fals
 
     case 'charon':
       return (
-        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: (SYMBOL_TINT[symbolType] ? SYMBOL_TINT[symbolType] + ' ' : '') + filterStyle, overflow: 'visible' }}>
           <circle cx="22" cy="22" r="14.5" fill="url(#grad_charon)" />
           {/* Mordor Macula Reddish North Pole Cap */}
           <ellipse cx="22" cy="10" rx="9" ry="4" fill="#991b1b" opacity="0.85" />
@@ -603,7 +623,7 @@ export const renderTileGraphic = (symbolType: string, _isCovered: boolean = fals
 
     case 'makemake':
       return (
-        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: (SYMBOL_TINT[symbolType] ? SYMBOL_TINT[symbolType] + ' ' : '') + filterStyle, overflow: 'visible' }}>
           <circle cx="22" cy="22" r="14.5" fill="url(#grad_makemake)" />
           <circle cx="16" cy="19" r="2.8" fill="#450a0a" opacity="0.6" />
           <circle cx="26" cy="24" r="3.5" fill="#450a0a" opacity="0.55" />
@@ -620,7 +640,7 @@ export const renderTileGraphic = (symbolType: string, _isCovered: boolean = fals
 
     case 'haumea':
       return (
-        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: (SYMBOL_TINT[symbolType] ? SYMBOL_TINT[symbolType] + ' ' : '') + filterStyle, overflow: 'visible' }}>
           {/* Rapid spinning Rugby Ball Ellipsoid (길쭉한 럭비공 왜소행성) */}
           <ellipse cx="22" cy="22" rx="18" ry="11" fill="url(#grad_haumea)" transform="rotate(-15 22 22)" />
           {/* Ring */}
@@ -639,7 +659,7 @@ export const renderTileGraphic = (symbolType: string, _isCovered: boolean = fals
     // --- 9. 혜성과 성간 천체 ---
     case 'halley':
       return (
-        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: (SYMBOL_TINT[symbolType] ? SYMBOL_TINT[symbolType] + ' ' : '') + filterStyle, overflow: 'visible' }}>
           {/* Long blue gas ion tail */}
           <path d="M 26 18 Q 38 10 42 6 L 36 26 Z" fill="url(#tail_halley)" opacity="0.75" />
           <circle cx="18" cy="26" r="7.5" fill="url(#grad_halley)" />
@@ -660,7 +680,7 @@ export const renderTileGraphic = (symbolType: string, _isCovered: boolean = fals
 
     case 'oumuamua':
       return (
-        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: (SYMBOL_TINT[symbolType] ? SYMBOL_TINT[symbolType] + ' ' : '') + filterStyle, overflow: 'visible' }}>
           {/* Elongated Cigar Shaped Interstellar Rock */}
           <ellipse cx="22" cy="22" rx="18" ry="5.5" fill="url(#grad_oumuamua)" transform="rotate(-35 22 22)" />
           <circle cx="16" cy="26" r="1.5" fill="#450a0a" transform="rotate(-35 22 22)" />
@@ -677,7 +697,7 @@ export const renderTileGraphic = (symbolType: string, _isCovered: boolean = fals
 
     case 'borisov':
       return (
-        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: (SYMBOL_TINT[symbolType] ? SYMBOL_TINT[symbolType] + ' ' : '') + filterStyle, overflow: 'visible' }}>
           <path d="M 24 20 L 40 8 L 32 30 Z" fill="#34d399" opacity="0.6" />
           <circle cx="18" cy="24" r="7" fill="url(#grad_borisov)" />
           <defs>
@@ -692,7 +712,7 @@ export const renderTileGraphic = (symbolType: string, _isCovered: boolean = fals
 
     case 'comet67p':
       return (
-        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: (SYMBOL_TINT[symbolType] ? SYMBOL_TINT[symbolType] + ' ' : '') + filterStyle, overflow: 'visible' }}>
           {/* Rubber ducky two-lobed comet */}
           <circle cx="18" cy="24" r="8" fill="#44403c" />
           <circle cx="27" cy="18" r="5.5" fill="#57534e" />
@@ -704,7 +724,7 @@ export const renderTileGraphic = (symbolType: string, _isCovered: boolean = fals
     // --- 10. 성운들 ---
     case 'orion':
       return (
-        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: (SYMBOL_TINT[symbolType] ? SYMBOL_TINT[symbolType] + ' ' : '') + filterStyle, overflow: 'visible' }}>
           {/* Pink Glowing Nebula Clouds */}
           <circle cx="19" cy="20" r="11" fill="#ec4899" opacity="0.75" />
           <circle cx="26" cy="23" r="10" fill="#a855f7" opacity="0.8" />
@@ -718,7 +738,7 @@ export const renderTileGraphic = (symbolType: string, _isCovered: boolean = fals
 
     case 'crab':
       return (
-        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: (SYMBOL_TINT[symbolType] ? SYMBOL_TINT[symbolType] + ' ' : '') + filterStyle, overflow: 'visible' }}>
           <circle cx="22" cy="22" r="13" fill="#f97316" opacity="0.7" />
           <path d="M 12 14 Q 22 22 32 12 M 10 26 Q 22 22 34 26 M 15 32 Q 22 18 29 32" stroke="#06b6d4" strokeWidth="1.8" fill="none" opacity="0.85" />
           <circle cx="22" cy="22" r="3" fill="#ffffff" />
@@ -727,7 +747,7 @@ export const renderTileGraphic = (symbolType: string, _isCovered: boolean = fals
 
     case 'ring':
       return (
-        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: (SYMBOL_TINT[symbolType] ? SYMBOL_TINT[symbolType] + ' ' : '') + filterStyle, overflow: 'visible' }}>
           <ellipse cx="22" cy="22" rx="15" ry="12" fill="none" stroke="#06b6d4" strokeWidth="5" opacity="0.9" />
           <ellipse cx="22" cy="22" rx="15" ry="12" fill="none" stroke="#3b82f6" strokeWidth="2.5" opacity="0.8" />
           <circle cx="22" cy="22" r="2" fill="#ffffff" />
@@ -736,7 +756,7 @@ export const renderTileGraphic = (symbolType: string, _isCovered: boolean = fals
 
     case 'helix':
       return (
-        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: (SYMBOL_TINT[symbolType] ? SYMBOL_TINT[symbolType] + ' ' : '') + filterStyle, overflow: 'visible' }}>
           <circle cx="22" cy="22" r="15" fill="none" stroke="#ef4444" strokeWidth="4" opacity="0.85" />
           <circle cx="22" cy="22" r="10" fill="none" stroke="#38bdf8" strokeWidth="3" opacity="0.9" />
           <circle cx="22" cy="22" r="3" fill="#ffffff" />
@@ -746,7 +766,7 @@ export const renderTileGraphic = (symbolType: string, _isCovered: boolean = fals
     // --- 11. 항성의 일생: 태양, 시리우스, 베텔게우스, 펄서 ---
     case 'sun':
       return (
-        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: (SYMBOL_TINT[symbolType] ? SYMBOL_TINT[symbolType] + ' ' : '') + filterStyle, overflow: 'visible' }}>
           {/* Corona Rays */}
           <circle cx="22" cy="22" r="16" fill="#fde047" opacity="0.4" />
           <circle cx="22" cy="22" r="13" fill="url(#grad_sun)" />
@@ -769,7 +789,7 @@ export const renderTileGraphic = (symbolType: string, _isCovered: boolean = fals
 
     case 'sirius':
       return (
-        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: (SYMBOL_TINT[symbolType] ? SYMBOL_TINT[symbolType] + ' ' : '') + filterStyle, overflow: 'visible' }}>
           <polygon points="22,6 26,18 38,22 26,26 22,38 18,26 6,22 18,18" fill="url(#grad_sirius)" />
           <circle cx="22" cy="22" r="5" fill="#ffffff" />
           <defs>
@@ -784,7 +804,7 @@ export const renderTileGraphic = (symbolType: string, _isCovered: boolean = fals
 
     case 'betelgeuse':
       return (
-        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: (SYMBOL_TINT[symbolType] ? SYMBOL_TINT[symbolType] + ' ' : '') + filterStyle, overflow: 'visible' }}>
           <circle cx="22" cy="22" r="15.5" fill="url(#grad_betelgeuse)" />
           <circle cx="16" cy="18" r="4" fill="#fb7185" opacity="0.6" />
           <circle cx="27" cy="24" r="5" fill="#fb7185" opacity="0.5" />
@@ -801,7 +821,7 @@ export const renderTileGraphic = (symbolType: string, _isCovered: boolean = fals
 
     case 'pulsar':
       return (
-        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: (SYMBOL_TINT[symbolType] ? SYMBOL_TINT[symbolType] + ' ' : '') + filterStyle, overflow: 'visible' }}>
           {/* Twin energetic beam cones */}
           <polygon points="22,22 10,4 34,4" fill="#38bdf8" opacity="0.75" />
           <polygon points="22,22 10,40 34,40" fill="#38bdf8" opacity="0.75" />
@@ -812,7 +832,7 @@ export const renderTileGraphic = (symbolType: string, _isCovered: boolean = fals
     // --- 12. 은하와 블랙홀 ---
     case 'andromeda':
       return (
-        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: (SYMBOL_TINT[symbolType] ? SYMBOL_TINT[symbolType] + ' ' : '') + filterStyle, overflow: 'visible' }}>
           {/* Spiral Galaxy Arms */}
           <ellipse cx="22" cy="22" rx="17" ry="9" fill="url(#grad_andromeda)" transform="rotate(-30 22 22)" />
           <circle cx="22" cy="22" r="4.5" fill="#ffffff" />
@@ -828,7 +848,7 @@ export const renderTileGraphic = (symbolType: string, _isCovered: boolean = fals
 
     case 'blackhole':
       return (
-        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: (SYMBOL_TINT[symbolType] ? SYMBOL_TINT[symbolType] + ' ' : '') + filterStyle, overflow: 'visible' }}>
           {/* Accretion Disk */}
           <ellipse cx="22" cy="22" rx="18" ry="7" fill="none" stroke="url(#bh_acc)" strokeWidth="4" />
           <ellipse cx="22" cy="22" rx="18" ry="7" fill="none" stroke="#f59e0b" strokeWidth="2" opacity="0.9" />
@@ -846,7 +866,7 @@ export const renderTileGraphic = (symbolType: string, _isCovered: boolean = fals
 
     case 'sombrero':
       return (
-        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: (SYMBOL_TINT[symbolType] ? SYMBOL_TINT[symbolType] + ' ' : '') + filterStyle, overflow: 'visible' }}>
           <circle cx="22" cy="22" r="8" fill="#ffffff" opacity="0.9" />
           <ellipse cx="22" cy="22" rx="18" ry="4" fill="#e2e8f0" opacity="0.75" />
           {/* Dark dust lane */}
@@ -856,7 +876,7 @@ export const renderTileGraphic = (symbolType: string, _isCovered: boolean = fals
 
     case 'quasar':
       return (
-        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: (SYMBOL_TINT[symbolType] ? SYMBOL_TINT[symbolType] + ' ' : '') + filterStyle, overflow: 'visible' }}>
           <line x1="22" y1="4" x2="22" y2="40" stroke="#f43f5e" strokeWidth="3" strokeLinecap="round" />
           <circle cx="22" cy="22" r="9" fill="#facc15" />
           <circle cx="22" cy="22" r="4" fill="#ffffff" />
@@ -876,6 +896,7 @@ export const JellyTile: React.FC<JellyTileProps> = ({
   item,
   isCovered = false,
   isAlien = false,
+  alienKind = 'cover',
   isInDock = false,
   onClick,
   size = 'md',
@@ -982,12 +1003,12 @@ export const JellyTile: React.FC<JellyTileProps> = ({
       <div
         className={`absolute inset-0 rounded-2xl border transition-all duration-300 ${
           isAlien
-            ? 'bg-gradient-to-b from-[#8b5cf6] via-[#6d28d9] to-[#4c1d95] border-[#a78bfa]'
+            ? `${ALIEN_TILE_STYLE[alienKind].bg} ${ALIEN_TILE_STYLE[alienKind].border}`
             : 'bg-gradient-to-b from-[#ffffff] via-[#faf7f0] to-[#f4eee1] border-[#e2d9c8]'
         }`}
         style={{
           boxShadow: isAlien
-            ? 'inset 0 2px 4px rgba(255,255,255,0.45), inset 0 -3px 5px rgba(30,10,60,0.45)'
+            ? ALIEN_TILE_STYLE[alienKind].shadow
             : 'inset 0 2px 3px rgba(255,255,255,1), inset 0 -3px 4px rgba(180,160,130,0.2)',
         }}
       />
@@ -1009,7 +1030,7 @@ export const JellyTile: React.FC<JellyTileProps> = ({
         `}
       >
         {isAlien ? (
-          <AlienFace className={size === 'sm' ? 'w-[30px] h-[30px]' : 'w-[52px] h-[52px] sm:w-[56px] sm:h-[56px]'} />
+          <AlienFace kind={alienKind} className={size === 'sm' ? 'w-[30px] h-[30px]' : 'w-[52px] h-[52px] sm:w-[56px] sm:h-[56px]'} />
         ) : (
           renderTileGraphic(item.symbolType, isCovered, item.emoji, size)
         )}
