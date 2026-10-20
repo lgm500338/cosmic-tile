@@ -97,7 +97,7 @@ export const HowToPlayModal: React.FC<HowToPlayModalProps> = ({ language = 'ko',
             </div>
             <div>
               <div className="text-xs font-bold text-amber-300 mb-0.5">
-                {isEn ? '✨ Cosmic Odyssey & Porcelain Jelly Tiles' : '✨ 나만의 차별화: 탱글 젤리 & 우주·판타지 세계관'}
+                {isEn ? '✨ Cosmic Odyssey & Porcelain Jelly Tiles' : '✨ 진짜 우주를 여행하는 타일 퍼즐'}
               </div>
               <div className="text-[11px] text-slate-300 leading-relaxed">
                 {isEn ? (

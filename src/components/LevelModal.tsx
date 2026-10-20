@@ -125,7 +125,7 @@ export const LevelModal: React.FC<LevelModalProps> = ({
                 {isCurrent && (
                   <div className="flex items-center gap-0.5 text-[9px] font-black text-cyan-300">
                     <Play className="w-2 h-2 fill-cyan-300" />
-                    <span>진행중</span>
+                    <span>{language === 'ko' ? '진행중' : 'Now'}</span>
                   </div>
                 )}
               </button>

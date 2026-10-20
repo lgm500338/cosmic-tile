@@ -5,9 +5,10 @@ import { Sparkles, Trophy } from 'lucide-react';
 interface PsychologicalBannerProps {
   text: string;
   onDismiss: () => void;
+  language?: 'ko' | 'en';
 }
 
-export const PsychologicalBanner: React.FC<PsychologicalBannerProps> = ({ text, onDismiss }) => {
+export const PsychologicalBanner: React.FC<PsychologicalBannerProps> = ({ text, onDismiss, language = 'ko' }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       onDismiss();
@@ -39,7 +40,7 @@ export const PsychologicalBanner: React.FC<PsychologicalBannerProps> = ({ text, 
 
           {/* Title: 행성 미션 (사진 1의 '블라인드 카드' 위치) */}
           <h3 className="text-2xl font-black text-white tracking-tight mb-2 drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]">
-            행성 탐사 미션
+            {language === 'ko' ? '행성 탐사 미션' : 'Planet Mission'}
           </h3>
 
           {/* Body: "3% 플레이어가 실패했습니다. 이겨 보세요!" (사진 1 기준) */}
@@ -48,7 +49,7 @@ export const PsychologicalBanner: React.FC<PsychologicalBannerProps> = ({ text, 
           </p>
 
           <span className="text-[11px] font-bold text-emerald-200 opacity-90">
-            탭하여 퍼즐 시작 ⚡
+            {language === 'ko' ? '탭하여 퍼즐 시작 ⚡' : 'Tap to start ⚡'}
           </span>
         </motion.div>
       </div>

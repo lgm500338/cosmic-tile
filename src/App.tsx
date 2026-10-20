@@ -736,6 +736,7 @@ export default function App() {
         {/* Psychological Failure Rate Banner ("75%가 이 레벨에서 실패했습니다") */}
         {psychologicalBannerText && (
           <PsychologicalBanner
+            language={language}
             text={psychologicalBannerText}
             onDismiss={() => setPsychologicalBannerText(null)}
           />

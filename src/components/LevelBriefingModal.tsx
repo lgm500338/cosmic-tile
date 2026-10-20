@@ -84,7 +84,8 @@ export const LevelBriefingModal: React.FC<LevelBriefingModalProps> = ({
           {celestialBodies.map(body => {
             const enInfo = CELESTIAL_ENGLISH[body.id];
             const displayName = language === 'ko' ? body.titleKo : (enInfo?.name || body.name);
-            const secondaryName = language === 'ko' ? body.name : body.titleKo;
+            // 한국어 모드에서만 영어 이름을 함께 보여주고, 영어 모드에서는 한글을 섞지 않는다
+            const secondaryName = language === 'ko' ? body.name : '';
             const category = language === 'ko' ? body.category : (enInfo?.category || body.categoryEn || body.category);
             const discovery = language === 'ko' ? body.discoveryDate : (enInfo?.discoveryDate || body.discoveryDateEn || body.discoveryDate);
             const description = language === 'ko' ? body.description : (enInfo?.description || body.descriptionEn || body.description);
@@ -110,7 +111,7 @@ export const LevelBriefingModal: React.FC<LevelBriefingModalProps> = ({
                       {displayName}:
                     </span>
                     <span className="text-xs font-bold text-slate-300">
-                      ({secondaryName})
+                      {secondaryName ? `(${secondaryName})` : ''}
                     </span>
                     {category && (
                       <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-500/25 border border-cyan-400/40 text-cyan-200">

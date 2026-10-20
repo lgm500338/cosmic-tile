@@ -1,4 +1,4 @@
-# 우주 타일 매치 (Jelly Match: Cosmic)
+# 우주 타일 매치 (Jelly Match: Cosmic Odyssey)
 
 실제 천체 47종으로 하는 3-타일 매치 퍼즐 게임. React + Vite + TypeScript + Tailwind CSS.
 
