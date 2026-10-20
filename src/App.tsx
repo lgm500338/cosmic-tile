@@ -3,7 +3,8 @@ import confetti from 'canvas-confetti';
 import { BoardTile, DockTile, ThemeId, BoosterType, LevelConfig, AppLanguage } from './types/game';
 import { GAME_THEMES } from './data/themes';
 import { soundManager } from './utils/audio';
-import { generateLevel, recalculateOcclusion, getRoadmapRewardForLevel, reshuffleBoardSolvable } from './utils/levelGenerator';
+import { generateLevel, recalculateOcclusion, getRoadmapRewardForLevel, reshuffleBoardSolvable, ALIEN_DEEP_LEVEL } from './utils/levelGenerator';
+import { AlienFlyAway } from './components/AlienTile';
 import { CosmicBackground } from './components/CosmicBackground';
 import { GameHUD } from './components/GameHUD';
 import { GameBoard } from './components/GameBoard';
@@ -138,13 +139,16 @@ export default function App() {
   // 지금 배경 사진 정보 (출처 표시: CC BY 4.0 조건)
   const [photoInfo, setPhotoInfo] = useState<BackgroundManifestEntry | null>(null);
 
+  // 외계인이 날아가는 효과 위치
+  const [alienFly, setAlienFly] = useState<{ id: number; x: number; y: number } | null>(null);
+
   // 부스터 안내 토스트 (예: 코인 부족)
   const [boosterToast, setBoosterToast] = useState<string | null>(null);
   const boosterToastTimer = useRef<number | null>(null);
-  const showBoosterToast = (msg: string) => {
+  const showBoosterToast = (msg: string, ms = 1800) => {
     setBoosterToast(msg);
     if (boosterToastTimer.current) window.clearTimeout(boosterToastTimer.current);
-    boosterToastTimer.current = window.setTimeout(() => setBoosterToast(null), 1800);
+    boosterToastTimer.current = window.setTimeout(() => setBoosterToast(null), ms);
   };
   const [showHowToPlay, setShowHowToPlay] = useState<boolean>(false);
   const [showBriefingModal, setShowBriefingModal] = useState<boolean>(true);
@@ -397,8 +401,19 @@ export default function App() {
       return [...prevDock, newDockTile];
     });
 
+    // 외계인 타일: 누르는 순간 외계인이 날아가고 숨겨진 천체가 드러난다
+    if (tile.isAlien) {
+      const el = document.querySelector(`[data-tile-id="${tile.id}"]`);
+      if (el) {
+        const r = el.getBoundingClientRect();
+        setAlienFly({ id: Date.now(), x: r.left + r.width / 2, y: r.top + r.height / 2 });
+        window.setTimeout(() => setAlienFly(null), 900);
+      }
+    }
+
     setBoardTiles(prevBoard => {
-      const updated = prevBoard.map(b => (b.id === tile.id ? { ...b, isCollected: true } : b));
+      // 한 번 정체가 드러난 타일은 되돌리기로 보드에 돌아와도 천체로 보인다
+      const updated = prevBoard.map(b => (b.id === tile.id ? { ...b, isCollected: true, isAlien: false } : b));
       return recalculateOcclusion(updated);
     });
 
@@ -694,6 +709,7 @@ export default function App() {
       <CosmicBackground themeId={themeId} levelNumber={levelNumber} onPhotoInfo={setPhotoInfo} />
 
       {/* Waterfall Particle Shower & Golden Combo Banner (Fixed z-[100] top layer) */}
+      {alienFly && <AlienFlyAway id={alienFly.id} x={alienFly.x} y={alienFly.y} />}
       {goldStream && (
         <GoldStream id={goldStream.id} x={goldStream.x} y={goldStream.y} comboCount={goldStream.combo} label={goldStream.label} />
       )}
@@ -890,6 +906,22 @@ export default function App() {
           language={language}
           onStart={() => {
             setShowBriefingModal(false);
+            // 외계인 규칙이 처음 등장하거나 바뀌는 레벨에서 한 번 안내
+            try {
+              const hasAlien = boardTiles.some(t => t.isAlien);
+              const key = levelNumber >= ALIEN_DEEP_LEVEL ? 'jelly_alien_intro_deep' : 'jelly_alien_intro_top';
+              if (hasAlien && localStorage.getItem(key) !== '1') {
+                localStorage.setItem(key, '1');
+                window.setTimeout(() => showBoosterToast(
+                  levelNumber >= ALIEN_DEEP_LEVEL
+                    ? (language === 'ko' ? '👽 외계인이 아래층 천체까지 숨기기 시작했어요!' : '👽 Aliens now hide tiles in lower layers too!')
+                    : (language === 'ko' ? '👽 외계인 침공! 눌러야 숨긴 천체가 드러나요' : '👽 Alien invasion! Tap to reveal the hidden body'),
+                  3800
+                ), 2200);
+              }
+            } catch {
+              /* ignore */
+            }
             setPsychologicalBannerText(language === 'en' ? (levelConfig.failureRateTextEn || levelConfig.failureRateText) : levelConfig.failureRateText);
           }}
           onClose={() => {

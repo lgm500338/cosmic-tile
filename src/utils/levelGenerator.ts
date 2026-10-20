@@ -451,6 +451,26 @@ export function reshuffleBoardSolvable(tiles: BoardTile[], dockTypeIds: string[]
   return recalculateOcclusion(tiles.map(t => (byId.has(t.id) ? { ...t, typeId: byId.get(t.id)! } : t)));
 }
 
+/**
+ * 외계인 침공: 일부 타일을 외계인이 가려서 누르기 전에는 정체를 알 수 없게 한다
+ *  - 15~20레벨: 처음부터 누를 수 있는 위층 타일 중에서만 (판의 약 5%, 2~4개)
+ *  - 21~49레벨: 아래층에 깔린 타일도 포함 (약 6%)
+ *  - 50레벨~: 약 10%
+ * 숨기기만 하므로 '반드시 풀 수 있는 판'은 그대로 유지된다.
+ */
+export const ALIEN_START_LEVEL = 15;
+export const ALIEN_DEEP_LEVEL = 21;
+function assignAliens(tiles: BoardTile[], levelNum: number): BoardTile[] {
+  if (levelNum < ALIEN_START_LEVEL) return tiles;
+  const topOnly = levelNum < ALIEN_DEEP_LEVEL;
+  const pool = tiles.filter(t => (topOnly ? !t.isCovered : true));
+  const rate = levelNum < ALIEN_DEEP_LEVEL ? 0.05 : levelNum < 50 ? 0.06 : 0.1;
+  const count = Math.max(2, Math.min(topOnly ? 4 : 12, Math.round(tiles.length * rate), pool.length));
+  const shuffled = [...pool].sort(() => Math.random() - 0.5).slice(0, count);
+  const ids = new Set(shuffled.map(t => t.id));
+  return tiles.map(t => (ids.has(t.id) ? { ...t, isAlien: true } : t));
+}
+
 /** 레벨별 난이도 규칙 */
 function getDifficulty(levelNum: number): AssignOptions {
   if (levelNum <= 2) return { maxVisible: 3, maxOpen: 3, attempts: 1 };
@@ -796,7 +816,7 @@ export function generateLevel(levelNum: number, currentThemeId?: ThemeId): {
     isCollected: false,
   }));
 
-  const tilesWithOcclusion = recalculateOcclusion(rawTiles);
+  const tilesWithOcclusion = assignAliens(recalculateOcclusion(rawTiles), levelNum);
 
   const levelBriefing = {
     ...briefing,

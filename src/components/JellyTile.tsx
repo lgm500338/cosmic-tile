@@ -3,10 +3,12 @@ import { motion } from 'motion/react';
 import { AppLanguage, TileThemeItem } from '../types/game';
 import { CELESTIAL_ENGLISH } from '../data/celestialEnglish';
 import { soundManager } from '../utils/audio';
+import { AlienFace } from './AlienTile';
 
 interface JellyTileProps {
   item: TileThemeItem;
   isCovered?: boolean;
+  isAlien?: boolean; // 외계인이 숨긴 타일
   isInDock?: boolean;
   onClick?: () => void;
   size?: 'sm' | 'md' | 'lg';
@@ -873,6 +875,7 @@ export const renderTileGraphic = (symbolType: string, _isCovered: boolean = fals
 export const JellyTile: React.FC<JellyTileProps> = ({
   item,
   isCovered = false,
+  isAlien = false,
   isInDock = false,
   onClick,
   size = 'md',
@@ -927,7 +930,7 @@ export const JellyTile: React.FC<JellyTileProps> = ({
   const labelText = language === 'en'
     ? (item.shortLabelEn || CELESTIAL_ENGLISH[item.id]?.shortLabel || item.name.slice(0, 3).toUpperCase())
     : item.shortLabel;
-  const shouldShowLabel = Boolean(showTileText) && Boolean(labelText) && size !== 'sm' && !isCovered;
+  const shouldShowLabel = Boolean(showTileText) && Boolean(labelText) && size !== 'sm' && !isCovered && !isAlien;
 
   return (
     <motion.button
@@ -977,9 +980,15 @@ export const JellyTile: React.FC<JellyTileProps> = ({
     >
       {/* 1. Cream Ivory / Porcelain Ceramic Substrate Block (일관된 고품격 포슬린 타일 - 덮여있어도 색상 변형 없음) */}
       <div
-        className="absolute inset-0 rounded-2xl border transition-all duration-300 bg-gradient-to-b from-[#ffffff] via-[#faf7f0] to-[#f4eee1] border-[#e2d9c8]"
+        className={`absolute inset-0 rounded-2xl border transition-all duration-300 ${
+          isAlien
+            ? 'bg-gradient-to-b from-[#8b5cf6] via-[#6d28d9] to-[#4c1d95] border-[#a78bfa]'
+            : 'bg-gradient-to-b from-[#ffffff] via-[#faf7f0] to-[#f4eee1] border-[#e2d9c8]'
+        }`}
         style={{
-          boxShadow: 'inset 0 2px 3px rgba(255,255,255,1), inset 0 -3px 4px rgba(180,160,130,0.2)',
+          boxShadow: isAlien
+            ? 'inset 0 2px 4px rgba(255,255,255,0.45), inset 0 -3px 5px rgba(30,10,60,0.45)'
+            : 'inset 0 2px 3px rgba(255,255,255,1), inset 0 -3px 4px rgba(180,160,130,0.2)',
         }}
       />
 
@@ -999,7 +1008,11 @@ export const JellyTile: React.FC<JellyTileProps> = ({
           opacity-100
         `}
       >
-        {renderTileGraphic(item.symbolType, isCovered, item.emoji, size)}
+        {isAlien ? (
+          <AlienFace className={size === 'sm' ? 'w-[30px] h-[30px]' : 'w-[52px] h-[52px] sm:w-[56px] sm:h-[56px]'} />
+        ) : (
+          renderTileGraphic(item.symbolType, isCovered, item.emoji, size)
+        )}
 
         {/* Mixed small subtle 2-3 char planet name (한 레벨에 글이 있는 것과 없는 것이 함께 등장!) */}
         {shouldShowLabel && (

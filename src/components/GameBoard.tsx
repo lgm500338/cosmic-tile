@@ -145,11 +145,12 @@ export const GameBoard: React.FC<GameBoardProps> = ({
           const posY = paddingTop + (tile.y - minY) * gridUnitY - tile.layer * layerLiftY;
 
           // Highlight if wand recommended this tile
-          const isSuggested = wandSuggestedType === tile.typeId && !tile.isCovered;
+          const isSuggested = wandSuggestedType === tile.typeId && !tile.isCovered && !tile.isAlien;
 
           return (
             <div
               key={tile.id}
+              data-tile-id={tile.id}
               className="absolute transition-transform duration-200"
               style={{
                 left: `${posX}px`,
@@ -168,6 +169,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
                 item={themeItem}
                 layer={tile.layer}
                 isCovered={tile.isCovered}
+                isAlien={tile.isAlien}
                 onClick={() => onTileClick(tile)}
                 size="md"
                 showTileText={showTileText}

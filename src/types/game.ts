@@ -44,6 +44,8 @@ export interface BoardTile {
   y: number; // grid y, can be fractional
   isCovered: boolean;
   isCollected: boolean;
+  /** 외계인이 숨긴 타일: 누르기 전에는 어떤 천체인지 보이지 않는다 */
+  isAlien?: boolean;
 }
 
 export interface DockTile {
