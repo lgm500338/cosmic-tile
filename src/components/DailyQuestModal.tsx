@@ -81,6 +81,8 @@ export const DailyQuestModal: React.FC<DailyQuestModalProps> = ({
   const t = TRANSLATIONS[language];
   // Calculate which 10-level phase player is on (e.g. 1~10, 11~20, 21~30...)
   const activeLevel = Math.max(currentLevel, highestUnlockedLevel);
+  // 지금 깬 레벨이면 다음 레벨을, 아직 진행 중이면 그 레벨을 시작한다
+  const playLevel = highestUnlockedLevel > currentLevel && currentLevel + 1 <= highestUnlockedLevel ? Math.max(currentLevel, highestUnlockedLevel) : currentLevel;
   const phaseIndex = Math.floor((activeLevel - 1) / 10);
   const startLevel = phaseIndex * 10 + 1;
   const endLevel = startLevel + 9;
@@ -201,7 +203,7 @@ export const DailyQuestModal: React.FC<DailyQuestModalProps> = ({
             const reward = getQuestRewardForLevel(lvl, language);
             const isCompleted = highestUnlockedLevel > lvl;
             const isClaimed = claimedLevelRewards.includes(lvl);
-            const isCurrent = currentLevel === lvl;
+            const isCurrent = playLevel === lvl;
             const isLocked = !isCompleted && !isCurrent;
             const isMegaFinal = index === 9; // 10th level
 
@@ -286,7 +288,6 @@ export const DailyQuestModal: React.FC<DailyQuestModalProps> = ({
                       type="button"
                       onClick={() => {
                         onStartLevel(lvl);
-                        onClose();
                       }}
                       className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-cyan-400 to-blue-500 text-slate-950 text-xs font-black shadow-md flex items-center gap-1 cursor-pointer hover:brightness-110"
                     >
@@ -308,15 +309,14 @@ export const DailyQuestModal: React.FC<DailyQuestModalProps> = ({
         <motion.button
           type="button"
           onClick={() => {
-            onStartLevel(currentLevel);
-            onClose();
+            onStartLevel(playLevel);
           }}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.97 }}
           className="relative z-10 w-full py-3.5 rounded-2xl bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 text-slate-950 font-black text-base flex items-center justify-center gap-2 shadow-[0_8px_20px_rgba(251,191,36,0.35)] cursor-pointer"
         >
           <Sparkles className="w-5 h-5" />
-          <span>{language === 'ko' ? `레벨 ${currentLevel} 탐사 계속하기` : `Continue Level ${currentLevel}`}</span>
+          <span>{language === 'ko' ? `레벨 ${playLevel} 탐사 시작하기` : `Start Level ${playLevel}`}</span>
         </motion.button>
       </motion.div>
     </div>

@@ -445,15 +445,7 @@ class SoundController {
       this.playIceBreak();
     }
 
-    if (comboLevel === 1) {
-      this.speak('great');
-    } else if (comboLevel === 2) {
-      this.speak('excellent');
-    } else if (comboLevel === 3) {
-      this.speak('perfect');
-    } else {
-      this.speak('unbelievable');
-    }
+    // 콤보 음성(기계음 TTS)은 뺐다: 앱 안 브라우저에서 잘 안 나오고 소리가 어색해서. 효과음과 화면 문구만 사용
   }
 
   public playWhoosh() {
@@ -598,7 +590,6 @@ class SoundController {
         osc.stop(bellStart + 0.55);
       });
 
-      this.speak('clear');
     } catch {
       // ignore
     }

@@ -114,8 +114,11 @@ interface LayoutSpec {
 /** 레벨별 목표: 전체 타일 수 범위, 처음에 눌 수 있는(드러난) 타일 수 범위 */
 function getLayoutTarget(levelNum: number) {
   if (levelNum <= 5) return { minN: 24, maxN: 39, minF: 6, maxF: 12, W: [4, 5], H: [4, 5], L: [2, 3] };
-  if (levelNum <= 9) return { minN: 36, maxN: 57, minF: 10, maxF: 16, W: [5, 6], H: [5, 6], L: [3, 4] };
-  if (levelNum <= 19) return { minN: 54, maxN: 78, minF: 12, maxF: 18, W: [5, 7], H: [6, 7], L: [4, 5] };
+  // 가로 칸 수가 많으면 화면에 맞추느라 타일이 작아진다 → 30레벨까지는 가로 최대 5칸, 대신 세로로 더 쌓는다
+  if (levelNum <= 9) return { minN: 36, maxN: 57, minF: 10, maxF: 16, W: [5, 5], H: [5, 6], L: [3, 4] };
+  if (levelNum <= 19) return { minN: 48, maxN: 75, minF: 12, maxF: 18, W: [5, 5], H: [6, 7], L: [4, 5] };
+  if (levelNum <= 30) return { minN: 57, maxN: 84, minF: 12, maxF: 18, W: [5, 5], H: [6, 7], L: [5, 5] };
+  if (levelNum <= 60) return { minN: 60, maxN: 90, minF: 12, maxF: 20, W: [5, 6], H: [6, 7], L: [5, 5] };
   return { minN: 66, maxN: 96, minF: 12, maxF: 20, W: [6, 7], H: [6, 8], L: [5, 5] };
 }
 

@@ -41,6 +41,7 @@ export const CollectionDock: React.FC<CollectionDockProps> = ({
 
       {/* The 7 (or 8) slot bar container: Exact match to image.png dark blue container */}
       <div
+        id="collection-dock-bar"
         className={`
           relative w-full h-[52px] sm:h-[56px]
           rounded-xl p-1 flex items-center justify-start gap-1

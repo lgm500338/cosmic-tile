@@ -30,33 +30,36 @@ export const StageClearModal: React.FC<StageClearModalProps> = ({
     // 1. Play grand triumphant fanfare
     soundManager.playFanfare();
 
-    // 2. Center celebratory fireworks
-    confetti({
-      particleCount: 85,
-      spread: 90,
-      origin: { y: 0.55 },
-      colors: ['#fbbf24', '#f59e0b', '#38bdf8', '#f43f5e', '#34d399', '#a855f7'],
+    // 2. 레벨 클리어 대형 불꽃놀이: 가운데 큰 폭발 → 양옆 대포 → 하늘에서 연달아 터지는 불꽃
+    const colors = ['#fde047', '#fbbf24', '#f59e0b', '#38bdf8', '#f43f5e', '#34d399', '#a855f7', '#ffffff'];
+    const burst = (opts: confetti.Options) => {
+      try {
+        confetti({ colors, ticks: 260, scalar: 1.1, ...opts });
+      } catch {
+        /* ignore */
+      }
+    };
+    burst({ particleCount: 170, spread: 120, startVelocity: 48, origin: { x: 0.5, y: 0.55 } });
+    const timers: number[] = [];
+    timers.push(window.setTimeout(() => {
+      burst({ particleCount: 90, angle: 60, spread: 70, startVelocity: 60, origin: { x: 0, y: 0.75 } });
+      burst({ particleCount: 90, angle: 120, spread: 70, startVelocity: 60, origin: { x: 1, y: 0.75 } });
+    }, 300));
+    // 밤하늘 불꽃처럼 둥글게 퍼지는 폭발 4번
+    [650, 1000, 1350, 1700].forEach((delay, i) => {
+      timers.push(window.setTimeout(() => {
+        burst({
+          particleCount: 80,
+          spread: 360,
+          startVelocity: 28,
+          gravity: 0.7,
+          decay: 0.92,
+          origin: { x: 0.2 + ((i * 0.37) % 0.6), y: 0.18 + (i % 2) * 0.12 },
+          shapes: ['star', 'circle'],
+        });
+      }, delay));
     });
-
-    // 3. Dual side fanfare cannons after brief delay
-    const cannonTimer = setTimeout(() => {
-      confetti({
-        particleCount: 45,
-        angle: 60,
-        spread: 65,
-        origin: { x: 0.1, y: 0.65 },
-        colors: ['#ffd700', '#ff69b4', '#00ffff'],
-      });
-      confetti({
-        particleCount: 45,
-        angle: 120,
-        spread: 65,
-        origin: { x: 0.9, y: 0.65 },
-        colors: ['#ffd700', '#ff69b4', '#00ffff'],
-      });
-    }, 280);
-
-    return () => clearTimeout(cannonTimer);
+    return () => timers.forEach(t => clearTimeout(t));
   }, []);
 
   // Calculate 10-level phase for current level (e.g. 1~10, 11~20, 21~30...)

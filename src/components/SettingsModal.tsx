@@ -120,42 +120,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 </motion.div>
               </button>
             </div>
-
-            {/* Voice Announcer Toggle */}
-            <div className="flex items-center justify-between p-3 rounded-2xl bg-slate-950/60 border border-slate-800 hover:border-slate-700 transition-colors">
-              <div className="flex items-center gap-3">
-                <div className={`p-2 rounded-xl ${!isVoiceEnabled ? 'bg-slate-800 text-slate-400' : 'bg-amber-400/15 text-amber-300'}`}>
-                  {isVoiceEnabled ? <Mic className="w-4 h-4" /> : <MicOff className="w-4 h-4" />}
-                </div>
-                <div>
-                  <div className="text-sm font-bold text-white">
-                    {isKo ? '콤보 나레이터 음성' : 'Combo Voice Announcer'}
-                  </div>
-                  <div className="text-[11px] text-slate-400">
-                    {isKo ? 'Great!, Perfect! 남성 보이스 환호' : 'Arcade voice callouts on combos'}
-                  </div>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={onToggleVoice}
-                className={`relative w-12 h-6.5 rounded-full transition-colors cursor-pointer p-0.5 ${
-                  isVoiceEnabled ? 'bg-amber-400' : 'bg-slate-800'
-                }`}
-              >
-                <motion.div
-                  animate={{ x: isVoiceEnabled ? 22 : 0 }}
-                  transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                  className="w-5.5 h-5.5 rounded-full bg-white shadow-md flex items-center justify-center"
-                >
-                  {isVoiceEnabled ? (
-                    <Check className="w-3 h-3 text-amber-600 stroke-[3]" />
-                  ) : (
-                    <X className="w-3 h-3 text-slate-400 stroke-[3]" />
-                  )}
-                </motion.div>
-              </button>
-            </div>
           </div>
 
           {/* Group 2: Display & Language */}

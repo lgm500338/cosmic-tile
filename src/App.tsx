@@ -19,6 +19,7 @@ import { HowToPlayModal } from './components/HowToPlayModal';
 import { LevelBriefingModal } from './components/LevelBriefingModal';
 import { PsychologicalBanner } from './components/PsychologicalBanner';
 import { ParticleShower, VoiceCalloutWord } from './components/ParticleShower';
+import { GoldStream } from './components/GoldStream';
 import { DailyQuestModal, QuestRewardItem, getQuestRewardForLevel } from './components/DailyQuestModal';
 import { DailyAttendanceModal, AttendanceReward } from './components/DailyAttendanceModal';
 
@@ -154,6 +155,7 @@ export default function App() {
   const [psychologicalBannerText, setPsychologicalBannerText] = useState<string | null>(null);
 
   // Waterfall Particle Shower (Photo 5 effect on match-3)
+  const [goldStream, setGoldStream] = useState<{ id: number; x: number; y: number; combo: number; label: string } | null>(null);
   const [showerTrigger, setShowerTrigger] = useState<{
     id: number;
     combo: number;
@@ -323,6 +325,8 @@ export default function App() {
 
   // Load level on start once
   const isInitialMount = useRef(true);
+  // 도전과제 창을 닫으면 다음 레벨 브리핑을 띄워야 하는지
+  const pendingBriefingRef = useRef(false);
   useEffect(() => {
     if (isInitialMount.current) {
       isInitialMount.current = false;
@@ -444,31 +448,21 @@ export default function App() {
       setFloatingCoins(earnedCoins);
       setTimeout(() => setFloatingCoins(0), 1200);
 
-      try {
-        confetti({
-          particleCount: 50,
-          spread: 80,
-          origin: { y: 0.35 },
-          colors: ['#fbbf24', '#38bdf8', '#f43f5e', '#34d399', '#a855f7'],
-        });
-      } catch {
-        // ignore
+      // 맞춘 3개 타일 자리에서 황금 줄기가 쏟아진다 (화면 전체 폭죽 대신)
+      const matchedIdx = matched.map(m => dockTiles.findIndex(d => d.instanceId === m.instanceId)).filter(i => i >= 0);
+      const midIdx = matchedIdx.length ? matchedIdx.reduce((a, b) => a + b, 0) / matchedIdx.length : 3;
+      const bar = document.getElementById('collection-dock-bar');
+      let sx = window.innerWidth / 2, sy = 140;
+      if (bar) {
+        const r = bar.getBoundingClientRect();
+        const inner = r.width - 8;
+        sx = r.left + 4 + (midIdx + 0.5) * (inner / maxSlots);
+        sy = r.bottom - 6;
       }
-
-      const callout: VoiceCalloutWord =
-        nextCombo === 1
-          ? 'great'
-          : nextCombo === 2
-          ? 'excellent'
-          : nextCombo === 3
-          ? 'perfect'
-          : 'unbelievable';
-
-      setShowerTrigger({ id: Date.now(), combo: nextCombo, callout });
+      const label = nextCombo === 1 ? 'GREAT!' : nextCombo === 2 ? 'EXCELLENT!' : nextCombo === 3 ? 'PERFECT!' : 'UNBELIEVABLE!';
+      setGoldStream({ id: Date.now(), x: sx, y: sy, combo: nextCombo, label });
       if (showerTimerRef.current) clearTimeout(showerTimerRef.current);
-      showerTimerRef.current = setTimeout(() => {
-        setShowerTrigger(null);
-      }, 1900);
+      showerTimerRef.current = setTimeout(() => setGoldStream(null), 1500);
 
       // Independent removal: NEVER cancelled by re-renders!
       setTimeout(() => {
@@ -700,6 +694,9 @@ export default function App() {
       <CosmicBackground themeId={themeId} levelNumber={levelNumber} onPhotoInfo={setPhotoInfo} />
 
       {/* Waterfall Particle Shower & Golden Combo Banner (Fixed z-[100] top layer) */}
+      {goldStream && (
+        <GoldStream id={goldStream.id} x={goldStream.x} y={goldStream.y} comboCount={goldStream.combo} label={goldStream.label} />
+      )}
       {showerTrigger && (
         <ParticleShower
           id={showerTrigger.id}
@@ -815,8 +812,12 @@ export default function App() {
           onNextLevel={() => {
             const nextLvl = levelNumber + 1;
             setShowStageClear(false);
-            // 11레벨, 21레벨, 31레벨 등 새로운 10레벨 구간 시작 전 일일도전과제 창 자동 팝업!
+            // 11·21·31레벨 등 새 10레벨 구간이 시작될 때: 먼저 다음 레벨을 준비해 두고 도전과제 창을 띄운다
+            // (예전에는 레벨을 바꾸지 않고 창만 띄워서 "레벨 10 계속하기"로 되돌아가는 버그가 있었음)
             if ((nextLvl - 1) % 10 === 0 && nextLvl > 1) {
+              initLevel(nextLvl, undefined, false);
+              setPsychologicalBannerText(null);
+              pendingBriefingRef.current = true;
               setShowDailyQuestModal(true);
             } else {
               initLevel(nextLvl, undefined, true);
@@ -841,9 +842,21 @@ export default function App() {
           onClaimAllAvailable={handleClaimAllAvailableQuestRewards}
           onStartLevel={targetLvl => {
             setShowDailyQuestModal(false);
-            initLevel(targetLvl, undefined, true);
+            pendingBriefingRef.current = false;
+            if (targetLvl === levelNumber && !showStageClear) {
+              // 이미 준비된 레벨이면 판을 새로 만들지 않고 브리핑만 띄운다
+              setShowBriefingModal(true);
+            } else {
+              initLevel(targetLvl, undefined, true);
+            }
           }}
-          onClose={() => setShowDailyQuestModal(false)}
+          onClose={() => {
+            setShowDailyQuestModal(false);
+            if (pendingBriefingRef.current) {
+              pendingBriefingRef.current = false;
+              setShowBriefingModal(true);
+            }
+          }}
         />
       )}
 
