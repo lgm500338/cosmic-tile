@@ -699,12 +699,13 @@ export const CosmicBackground: React.FC<CosmicBackgroundProps> = ({ levelNumber 
       // 실제 사진: 영화 카메라처럼 천천히 다가가며 흐른다 (켄 번스 효과)
       if (photo && photoAlpha > 0) {
         const iw = photo.naturalWidth, ih = photo.naturalHeight;
-        const zoom = 1.08 + 0.12 * (0.5 + 0.5 * Math.sin(t * 0.12));
+        // 어지럽지 않도록 아주 천천히 (약 2분 주기), 확대 폭도 작게
+        const zoom = 1.06 + 0.07 * (0.5 + 0.5 * Math.sin(t * 0.045));
         const s0 = Math.max(W / iw, H / ih) * zoom;
         const dw = iw * s0, dh = ih * s0;
         const mxp = (dw - W) / 2, myp = (dh - H) / 2;
-        const px = Math.sin(t * 0.09) * mxp * 0.85;
-        const py = Math.cos(t * 0.07) * myp * 0.85;
+        const px = Math.sin(t * 0.032) * mxp * 0.6;
+        const py = Math.cos(t * 0.026) * myp * 0.6;
         ctx.globalAlpha = photoAlpha;
         ctx.drawImage(photo, (W - dw) / 2 + px, (H - dh) / 2 + py, dw, dh);
         // 타일이 주인공이 되도록 사진을 살짝 어둡게
@@ -714,7 +715,7 @@ export const CosmicBackground: React.FC<CosmicBackgroundProps> = ({ levelNumber 
         ctx.globalCompositeOperation = 'lighter';
         ctx.globalAlpha = photoAlpha * 0.35;
         const cs2 = clouds.width;
-        ctx.drawImage(clouds, W * 0.5 - cs2 / 2 + Math.sin(t * 0.15) * W * 0.14, H * 0.45 - cs2 / 2 + Math.cos(t * 0.12) * H * 0.07);
+        ctx.drawImage(clouds, W * 0.5 - cs2 / 2 + Math.sin(t * 0.06) * W * 0.1, H * 0.45 - cs2 / 2 + Math.cos(t * 0.05) * H * 0.05);
         ctx.globalCompositeOperation = 'source-over';
         ctx.globalAlpha = 1;
       }
