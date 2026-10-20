@@ -117,7 +117,7 @@ export const BACKGROUND_PHOTOS: BackgroundPhoto[] = [
   { source: 'eso', id: 'yb_vlt_moon_cnn_cc', ko: '파라날 하늘의 천체 만남' },
   { source: 'webb', id: 'weic2620a', ko: '별의 요람 NGC 7129' },
   { source: 'hubble', id: 'opo1438b', ko: '나선 은하 M81' },
-  { source: 'eso', id: 'potw1618a', ko: '파라날 위 네 줄기 레이저' },
+  { source: 'eso', id: 'eso0846a', ko: '우리 은하의 중심' },
 ];
 
 export const SOURCE_INFO: Record<BgSource, { label: string; page: (id: string) => string; files: (id: string) => string[] }> = {
