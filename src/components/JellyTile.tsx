@@ -18,19 +18,68 @@ interface JellyTileProps {
   onBlockedClick?: () => void;
 }
 
+// 그림마다 실제로 그려진 범위에 맞춘 보기 영역 → 작게 그려진 천체(데이모스·포보스 등)도 타일을 꽉 채운다
+const TIGHT_VIEWBOX: Record<string, string> = {
+ "mercury": "5.5 5.5 33.0 33.0",
+ "venus": "5.5 5.5 33.0 33.0",
+ "earth": "5.5 5.5 33.0 33.0",
+ "moon": "5.5 5.5 33.0 33.0",
+ "iss": "4.5 2.2 35.0 35.0",
+ "mars": "5.2 5.0 33.5 33.5",
+ "phobos": "9.9 9.5 25.7 25.7",
+ "deimos": "12.1 12.0 20.8 20.8",
+ "ceres": "6.0 6.0 32.0 32.0",
+ "vesta": "9.8 9.8 25.1 25.1",
+ "pallas": "6.0 6.0 32.0 32.0",
+ "bennu": "6.5 6.5 31.0 31.0",
+ "jupiter": "5.5 5.5 33.0 33.0",
+ "io": "6.0 6.0 32.0 32.0",
+ "europa": "6.0 6.0 32.0 32.0",
+ "ganymede": "5.5 5.5 33.0 33.0",
+ "saturn": "1.5 1.5 41.0 41.0",
+ "titan": "5.5 5.5 33.0 33.0",
+ "enceladus": "3.8 6.0 36.5 36.5",
+ "mimas": "6.0 6.0 32.0 32.0",
+ "uranus": "2.5 2.5 39.0 39.0",
+ "neptune": "5.5 5.5 33.0 33.0",
+ "triton": "6.0 6.0 32.0 32.0",
+ "miranda": "6.0 6.0 32.0 32.0",
+ "pluto": "5.5 5.5 33.0 33.0",
+ "charon": "5.2 4.5 33.5 33.5",
+ "makemake": "6.0 6.0 32.0 32.0",
+ "haumea": "0.1 0.1 43.7 43.7",
+ "halley": "9.0 2.5 34.5 34.5",
+ "oumuamua": "2.6 2.7 38.8 38.8",
+ "borisov": "9.5 3.5 32.0 32.0",
+ "comet67p": "8.5 9.5 25.5 25.5",
+ "orion": "6.5 6.5 31.0 31.0",
+ "crab": "7.5 7.5 29.0 29.0",
+ "ring": "5.5 5.5 33.0 33.0",
+ "helix": "5.5 5.5 33.0 33.0",
+ "sun": "4.5 4.5 35.0 35.0",
+ "sirius": "4.5 4.5 35.0 35.0",
+ "betelgeuse": "5.0 5.0 34.0 34.0",
+ "pulsar": "2.5 2.5 39.0 39.0",
+ "andromeda": "1.3 1.3 41.4 41.4",
+ "blackhole": "2.5 2.5 39.0 39.0",
+ "sombrero": "2.5 2.5 39.0 39.0",
+ "quasar": "2.5 2.5 39.0 39.0"
+};
+const vb = (symbolType: string) => TIGHT_VIEWBOX[symbolType] || '0 0 44 44';
+
 // Custom rich vector graphic renderer for all 44 distinct celestial bodies
-const renderTileGraphic = (symbolType: string, _isCovered: boolean = false, emoji: string = '✨', size: 'sm' | 'md' | 'lg' = 'md') => {
+export const renderTileGraphic = (symbolType: string, _isCovered: boolean = false, emoji: string = '✨', size: 'sm' | 'md' | 'lg' = 'md') => {
   // Retain identical vibrant colors whether in front or behind (user request 9: 타일 뒤에 있을 때 색이 달라지지 않도록 동일 유지)
   // 색을 진하고 또렷하게 (채도·명암 강화) + 타일에서 떠 보이는 그림자
   const filterStyle = 'saturate(1.9) contrast(1.25) drop-shadow(0 3px 4px rgba(0,0,0,0.38))';
 
-  const baseSvg = size === 'sm' ? 'w-8 h-8 transition-transform' : 'w-[50px] h-[50px] sm:w-[54px] sm:h-[54px] transition-transform';
+  const baseSvg = size === 'sm' ? 'w-[30px] h-[30px] transition-transform' : 'w-[54px] h-[54px] sm:w-[58px] sm:h-[58px] transition-transform';
 
   switch (symbolType) {
     // --- 1. 수성과 금성 ---
     case 'mercury':
       return (
-        <svg viewBox="0 0 44 44" className={baseSvg} style={{ filter: filterStyle }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
           <circle cx="22" cy="22" r="15" fill="url(#grad_mercury)" />
           <circle cx="16" cy="18" r="3" fill="#64748b" opacity="0.75" />
           <circle cx="26" cy="24" r="3.8" fill="#64748b" opacity="0.65" />
@@ -48,7 +97,7 @@ const renderTileGraphic = (symbolType: string, _isCovered: boolean = false, emoj
 
     case 'venus':
       return (
-        <svg viewBox="0 0 44 44" className={baseSvg} style={{ filter: filterStyle }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
           <circle cx="22" cy="22" r="15" fill="url(#grad_venus)" />
           <path d="M 8 18 Q 22 22 36 17" stroke="#fef08a" strokeWidth="2.5" fill="none" opacity="0.85" />
           <path d="M 7 24 Q 22 28 37 23" stroke="#b45309" strokeWidth="2.8" fill="none" opacity="0.75" />
@@ -67,7 +116,7 @@ const renderTileGraphic = (symbolType: string, _isCovered: boolean = false, emoj
     // --- 2. 지구와 달, ISS ---
     case 'earth':
       return (
-        <svg viewBox="0 0 44 44" className={baseSvg} style={{ filter: filterStyle }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
           <circle cx="22" cy="22" r="15" fill="url(#grad_earth)" />
           <path d="M 14 16 Q 19 13 22 17 Q 24 22 19 25 Q 14 23 14 16 Z" fill="#22c55e" opacity="0.9" />
           <path d="M 23 20 Q 28 17 31 22 Q 29 27 25 28 Z" fill="#16a34a" opacity="0.9" />
@@ -85,7 +134,7 @@ const renderTileGraphic = (symbolType: string, _isCovered: boolean = false, emoj
 
     case 'moon':
       return (
-        <svg viewBox="0 0 44 44" className={baseSvg} style={{ filter: filterStyle }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
           <circle cx="22" cy="22" r="15" fill="url(#grad_moon)" />
           <circle cx="17" cy="17" r="3.2" fill="#d97706" opacity="0.4" />
           <circle cx="26" cy="20" r="2.2" fill="#d97706" opacity="0.35" />
@@ -104,7 +153,7 @@ const renderTileGraphic = (symbolType: string, _isCovered: boolean = false, emoj
 
     case 'iss':
       return (
-        <svg viewBox="0 0 44 44" className={baseSvg} style={{ filter: filterStyle }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
           {/* Main Module Truss */}
           <rect x="18" y="20" width="8" height="4" rx="1" fill="#e2e8f0" stroke="#475569" strokeWidth="0.8" />
           {/* Solar Arrays Left & Right */}
@@ -123,7 +172,7 @@ const renderTileGraphic = (symbolType: string, _isCovered: boolean = false, emoj
     // --- 3. 화성, 포보스, 데이모스 ---
     case 'mars':
       return (
-        <svg viewBox="0 0 44 44" className={baseSvg} style={{ filter: filterStyle }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
           <circle cx="22" cy="22" r="15" fill="url(#grad_mars)" />
           {/* Dark Maria & Canyons */}
           <path d="M 11 20 Q 18 24 23 20 Q 30 22 34 19 Q 32 26 22 28 Q 12 25 11 20 Z" fill="#881337" opacity="0.65" />
@@ -144,7 +193,7 @@ const renderTileGraphic = (symbolType: string, _isCovered: boolean = false, emoj
 
     case 'phobos':
       return (
-        <svg viewBox="0 0 44 44" className={baseSvg} style={{ filter: filterStyle }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
           {/* Irregular Potato Shape */}
           <path
             d="M 12 18 Q 15 10 26 12 Q 35 15 34 26 Q 31 34 20 33 Q 9 30 12 18 Z"
@@ -168,7 +217,7 @@ const renderTileGraphic = (symbolType: string, _isCovered: boolean = false, emoj
 
     case 'deimos':
       return (
-        <svg viewBox="0 0 44 44" className={baseSvg} style={{ filter: filterStyle }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
           {/* Smooth lumpy dusty asteroid */}
           <path
             d="M 14 20 Q 16 12 25 14 Q 33 17 31 25 Q 29 32 20 31 Q 12 28 14 20 Z"
@@ -190,7 +239,7 @@ const renderTileGraphic = (symbolType: string, _isCovered: boolean = false, emoj
     // --- 4. 소행성대: 세레스, 베스타, 팔라스, 베누 ---
     case 'ceres':
       return (
-        <svg viewBox="0 0 44 44" className={baseSvg} style={{ filter: filterStyle }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
           <circle cx="22" cy="22" r="14.5" fill="url(#grad_ceres)" />
           {/* Occator Crater Bright Salt Spot (신비로운 하얀 소금점) */}
           <circle cx="20" cy="19" r="3.2" fill="#ffffff" opacity="0.95" />
@@ -210,7 +259,7 @@ const renderTileGraphic = (symbolType: string, _isCovered: boolean = false, emoj
 
     case 'vesta':
       return (
-        <svg viewBox="0 0 44 44" className={baseSvg} style={{ filter: filterStyle }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
           {/* Irregular Rocky Protoplanet */}
           <path
             d="M 12 18 Q 18 10 28 12 Q 35 18 33 27 Q 29 34 19 33 Q 9 27 12 18 Z"
@@ -233,7 +282,7 @@ const renderTileGraphic = (symbolType: string, _isCovered: boolean = false, emoj
 
     case 'pallas':
       return (
-        <svg viewBox="0 0 44 44" className={baseSvg} style={{ filter: filterStyle }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
           <circle cx="22" cy="22" r="14.5" fill="url(#grad_pallas)" />
           <circle cx="16" cy="18" r="3.5" fill="#3b0764" opacity="0.75" />
           <circle cx="26" cy="24" r="3" fill="#3b0764" opacity="0.7" />
@@ -251,7 +300,7 @@ const renderTileGraphic = (symbolType: string, _isCovered: boolean = false, emoj
 
     case 'bennu':
       return (
-        <svg viewBox="0 0 44 44" className={baseSvg} style={{ filter: filterStyle }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
           {/* Diamond faceted spinning asteroid */}
           <polygon points="22,8 34,18 31,31 22,36 13,31 10,18" fill="url(#grad_bennu)" stroke="#0f766e" strokeWidth="1" />
           <polygon points="22,8 34,18 22,23" fill="#2dd4bf" opacity="0.6" />
@@ -270,7 +319,7 @@ const renderTileGraphic = (symbolType: string, _isCovered: boolean = false, emoj
     // --- 5. 목성과 갈릴레이 위성들 ---
     case 'jupiter':
       return (
-        <svg viewBox="0 0 44 44" className={baseSvg} style={{ filter: filterStyle }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
           <circle cx="22" cy="22" r="15" fill="url(#grad_jupiter)" />
           {/* Banded Gas Belts */}
           <path d="M 7 14 Q 22 17 37 14" stroke="#c2410c" strokeWidth="3" fill="none" opacity="0.85" />
@@ -292,7 +341,7 @@ const renderTileGraphic = (symbolType: string, _isCovered: boolean = false, emoj
 
     case 'io':
       return (
-        <svg viewBox="0 0 44 44" className={baseSvg} style={{ filter: filterStyle }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
           <circle cx="22" cy="22" r="14.5" fill="url(#grad_io)" />
           {/* Active Sulfur Volcanoes (화산 폭발 분화구) */}
           <circle cx="16" cy="18" r="3" fill="#b91c1c" stroke="#f59e0b" strokeWidth="1" />
@@ -313,7 +362,7 @@ const renderTileGraphic = (symbolType: string, _isCovered: boolean = false, emoj
 
     case 'europa':
       return (
-        <svg viewBox="0 0 44 44" className={baseSvg} style={{ filter: filterStyle }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
           <circle cx="22" cy="22" r="14.5" fill="url(#grad_europa)" />
           {/* Lineae Reddish Fractured Ice Cracks (얼음 균열선) */}
           <path d="M 8 16 Q 18 20 25 15 Q 31 18 36 24" stroke="#b45309" strokeWidth="1.2" fill="none" opacity="0.75" />
@@ -332,7 +381,7 @@ const renderTileGraphic = (symbolType: string, _isCovered: boolean = false, emoj
 
     case 'ganymede':
       return (
-        <svg viewBox="0 0 44 44" className={baseSvg} style={{ filter: filterStyle }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
           <circle cx="22" cy="22" r="15" fill="url(#grad_ganymede)" />
           <path d="M 10 18 Q 22 14 34 18 Q 28 26 18 25 Z" fill="#334155" opacity="0.7" />
           <circle cx="24" cy="28" r="3.5" fill="#1e293b" opacity="0.6" />
@@ -352,7 +401,7 @@ const renderTileGraphic = (symbolType: string, _isCovered: boolean = false, emoj
     case 'saturn':
     case 'saturn_h':
       return (
-        <svg viewBox="0 0 44 44" className={baseSvg} style={{ filter: filterStyle }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
           {/* Back Ring */}
           <ellipse cx="22" cy="22" rx="19" ry="6.5" fill="none" stroke="url(#ring_grad)" strokeWidth="3.8" strokeDasharray="30 40" strokeDashoffset="15" />
           {/* Planet Body */}
@@ -380,7 +429,7 @@ const renderTileGraphic = (symbolType: string, _isCovered: boolean = false, emoj
 
     case 'titan':
       return (
-        <svg viewBox="0 0 44 44" className={baseSvg} style={{ filter: filterStyle }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
           {/* Dense Orange Nitrogen Smog Atmosphere */}
           <circle cx="22" cy="22" r="15" fill="url(#grad_titan)" />
           {/* Methane Lake on top */}
@@ -398,7 +447,7 @@ const renderTileGraphic = (symbolType: string, _isCovered: boolean = false, emoj
 
     case 'enceladus':
       return (
-        <svg viewBox="0 0 44 44" className={baseSvg} style={{ filter: filterStyle }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
           <circle cx="22" cy="22" r="14.5" fill="url(#grad_enceladus)" />
           {/* South Polar Tiger Stripe Geysers (얼음 간헐천 분출) */}
           <path d="M 17 32 L 14 39" stroke="#38bdf8" strokeWidth="1.8" strokeLinecap="round" opacity="0.9" />
@@ -417,7 +466,7 @@ const renderTileGraphic = (symbolType: string, _isCovered: boolean = false, emoj
 
     case 'mimas':
       return (
-        <svg viewBox="0 0 44 44" className={baseSvg} style={{ filter: filterStyle }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
           <circle cx="22" cy="22" r="14.5" fill="url(#grad_mimas)" />
           {/* Giant Herschel Crater "Death Star Eye" */}
           <circle cx="18" cy="19" r="6" fill="#475569" stroke="#1e293b" strokeWidth="1.2" />
@@ -436,7 +485,7 @@ const renderTileGraphic = (symbolType: string, _isCovered: boolean = false, emoj
     // --- 7. 천왕성과 해왕성, 트리톤, 미란다 ---
     case 'uranus':
       return (
-        <svg viewBox="0 0 44 44" className={baseSvg} style={{ filter: filterStyle }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
           {/* Vertical Faint Ring */}
           <ellipse cx="22" cy="22" rx="6" ry="18" fill="none" stroke="#67e8f9" strokeWidth="1.5" opacity="0.7" />
           <circle cx="22" cy="22" r="12" fill="url(#grad_uranus)" />
@@ -453,7 +502,7 @@ const renderTileGraphic = (symbolType: string, _isCovered: boolean = false, emoj
 
     case 'neptune':
       return (
-        <svg viewBox="0 0 44 44" className={baseSvg} style={{ filter: filterStyle }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
           <circle cx="22" cy="22" r="15" fill="url(#grad_neptune)" />
           {/* Great Dark Spot storm */}
           <ellipse cx="25" cy="20" rx="4" ry="2.5" fill="#1e1b4b" opacity="0.8" />
@@ -473,7 +522,7 @@ const renderTileGraphic = (symbolType: string, _isCovered: boolean = false, emoj
 
     case 'triton':
       return (
-        <svg viewBox="0 0 44 44" className={baseSvg} style={{ filter: filterStyle }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
           <circle cx="22" cy="22" r="14.5" fill="url(#grad_triton)" />
           {/* Dark Nitrogen Geyser plumes */}
           <path d="M 15 28 L 13 23" stroke="#1e293b" strokeWidth="1.5" strokeLinecap="round" opacity="0.8" />
@@ -491,7 +540,7 @@ const renderTileGraphic = (symbolType: string, _isCovered: boolean = false, emoj
 
     case 'miranda':
       return (
-        <svg viewBox="0 0 44 44" className={baseSvg} style={{ filter: filterStyle }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
           <circle cx="22" cy="22" r="14.5" fill="url(#grad_miranda)" />
           {/* Verona Rupes 20km sheer cliff chevron lines */}
           <path d="M 10 20 L 22 28 L 34 19" stroke="#1e293b" strokeWidth="2" fill="none" opacity="0.8" />
@@ -510,7 +559,7 @@ const renderTileGraphic = (symbolType: string, _isCovered: boolean = false, emoj
     // --- 8. 카이퍼 벨트: 명왕성, 카론, 마케마케, 하우메아 ---
     case 'pluto':
       return (
-        <svg viewBox="0 0 44 44" className={baseSvg} style={{ filter: filterStyle }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
           <circle cx="22" cy="22" r="15" fill="url(#grad_pluto)" />
           {/* Sputnik Planitia Giant Cream-White Heart Glacier (하트 모양 빙하) */}
           <path
@@ -533,7 +582,7 @@ const renderTileGraphic = (symbolType: string, _isCovered: boolean = false, emoj
 
     case 'charon':
       return (
-        <svg viewBox="0 0 44 44" className={baseSvg} style={{ filter: filterStyle }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
           <circle cx="22" cy="22" r="14.5" fill="url(#grad_charon)" />
           {/* Mordor Macula Reddish North Pole Cap */}
           <ellipse cx="22" cy="10" rx="9" ry="4" fill="#991b1b" opacity="0.85" />
@@ -552,7 +601,7 @@ const renderTileGraphic = (symbolType: string, _isCovered: boolean = false, emoj
 
     case 'makemake':
       return (
-        <svg viewBox="0 0 44 44" className={baseSvg} style={{ filter: filterStyle }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
           <circle cx="22" cy="22" r="14.5" fill="url(#grad_makemake)" />
           <circle cx="16" cy="19" r="2.8" fill="#450a0a" opacity="0.6" />
           <circle cx="26" cy="24" r="3.5" fill="#450a0a" opacity="0.55" />
@@ -569,7 +618,7 @@ const renderTileGraphic = (symbolType: string, _isCovered: boolean = false, emoj
 
     case 'haumea':
       return (
-        <svg viewBox="0 0 44 44" className={baseSvg} style={{ filter: filterStyle }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
           {/* Rapid spinning Rugby Ball Ellipsoid (길쭉한 럭비공 왜소행성) */}
           <ellipse cx="22" cy="22" rx="18" ry="11" fill="url(#grad_haumea)" transform="rotate(-15 22 22)" />
           {/* Ring */}
@@ -588,7 +637,7 @@ const renderTileGraphic = (symbolType: string, _isCovered: boolean = false, emoj
     // --- 9. 혜성과 성간 천체 ---
     case 'halley':
       return (
-        <svg viewBox="0 0 44 44" className={baseSvg} style={{ filter: filterStyle }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
           {/* Long blue gas ion tail */}
           <path d="M 26 18 Q 38 10 42 6 L 36 26 Z" fill="url(#tail_halley)" opacity="0.75" />
           <circle cx="18" cy="26" r="7.5" fill="url(#grad_halley)" />
@@ -609,7 +658,7 @@ const renderTileGraphic = (symbolType: string, _isCovered: boolean = false, emoj
 
     case 'oumuamua':
       return (
-        <svg viewBox="0 0 44 44" className={baseSvg} style={{ filter: filterStyle }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
           {/* Elongated Cigar Shaped Interstellar Rock */}
           <ellipse cx="22" cy="22" rx="18" ry="5.5" fill="url(#grad_oumuamua)" transform="rotate(-35 22 22)" />
           <circle cx="16" cy="26" r="1.5" fill="#450a0a" transform="rotate(-35 22 22)" />
@@ -626,7 +675,7 @@ const renderTileGraphic = (symbolType: string, _isCovered: boolean = false, emoj
 
     case 'borisov':
       return (
-        <svg viewBox="0 0 44 44" className={baseSvg} style={{ filter: filterStyle }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
           <path d="M 24 20 L 40 8 L 32 30 Z" fill="#34d399" opacity="0.6" />
           <circle cx="18" cy="24" r="7" fill="url(#grad_borisov)" />
           <defs>
@@ -641,7 +690,7 @@ const renderTileGraphic = (symbolType: string, _isCovered: boolean = false, emoj
 
     case 'comet67p':
       return (
-        <svg viewBox="0 0 44 44" className={baseSvg} style={{ filter: filterStyle }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
           {/* Rubber ducky two-lobed comet */}
           <circle cx="18" cy="24" r="8" fill="#44403c" />
           <circle cx="27" cy="18" r="5.5" fill="#57534e" />
@@ -653,7 +702,7 @@ const renderTileGraphic = (symbolType: string, _isCovered: boolean = false, emoj
     // --- 10. 성운들 ---
     case 'orion':
       return (
-        <svg viewBox="0 0 44 44" className={baseSvg} style={{ filter: filterStyle }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
           {/* Pink Glowing Nebula Clouds */}
           <circle cx="19" cy="20" r="11" fill="#ec4899" opacity="0.75" />
           <circle cx="26" cy="23" r="10" fill="#a855f7" opacity="0.8" />
@@ -667,7 +716,7 @@ const renderTileGraphic = (symbolType: string, _isCovered: boolean = false, emoj
 
     case 'crab':
       return (
-        <svg viewBox="0 0 44 44" className={baseSvg} style={{ filter: filterStyle }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
           <circle cx="22" cy="22" r="13" fill="#f97316" opacity="0.7" />
           <path d="M 12 14 Q 22 22 32 12 M 10 26 Q 22 22 34 26 M 15 32 Q 22 18 29 32" stroke="#06b6d4" strokeWidth="1.8" fill="none" opacity="0.85" />
           <circle cx="22" cy="22" r="3" fill="#ffffff" />
@@ -676,7 +725,7 @@ const renderTileGraphic = (symbolType: string, _isCovered: boolean = false, emoj
 
     case 'ring':
       return (
-        <svg viewBox="0 0 44 44" className={baseSvg} style={{ filter: filterStyle }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
           <ellipse cx="22" cy="22" rx="15" ry="12" fill="none" stroke="#06b6d4" strokeWidth="5" opacity="0.9" />
           <ellipse cx="22" cy="22" rx="15" ry="12" fill="none" stroke="#3b82f6" strokeWidth="2.5" opacity="0.8" />
           <circle cx="22" cy="22" r="2" fill="#ffffff" />
@@ -685,7 +734,7 @@ const renderTileGraphic = (symbolType: string, _isCovered: boolean = false, emoj
 
     case 'helix':
       return (
-        <svg viewBox="0 0 44 44" className={baseSvg} style={{ filter: filterStyle }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
           <circle cx="22" cy="22" r="15" fill="none" stroke="#ef4444" strokeWidth="4" opacity="0.85" />
           <circle cx="22" cy="22" r="10" fill="none" stroke="#38bdf8" strokeWidth="3" opacity="0.9" />
           <circle cx="22" cy="22" r="3" fill="#ffffff" />
@@ -695,7 +744,7 @@ const renderTileGraphic = (symbolType: string, _isCovered: boolean = false, emoj
     // --- 11. 항성의 일생: 태양, 시리우스, 베텔게우스, 펄서 ---
     case 'sun':
       return (
-        <svg viewBox="0 0 44 44" className={baseSvg} style={{ filter: filterStyle }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
           {/* Corona Rays */}
           <circle cx="22" cy="22" r="16" fill="#fde047" opacity="0.4" />
           <circle cx="22" cy="22" r="13" fill="url(#grad_sun)" />
@@ -718,7 +767,7 @@ const renderTileGraphic = (symbolType: string, _isCovered: boolean = false, emoj
 
     case 'sirius':
       return (
-        <svg viewBox="0 0 44 44" className={baseSvg} style={{ filter: filterStyle }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
           <polygon points="22,6 26,18 38,22 26,26 22,38 18,26 6,22 18,18" fill="url(#grad_sirius)" />
           <circle cx="22" cy="22" r="5" fill="#ffffff" />
           <defs>
@@ -733,7 +782,7 @@ const renderTileGraphic = (symbolType: string, _isCovered: boolean = false, emoj
 
     case 'betelgeuse':
       return (
-        <svg viewBox="0 0 44 44" className={baseSvg} style={{ filter: filterStyle }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
           <circle cx="22" cy="22" r="15.5" fill="url(#grad_betelgeuse)" />
           <circle cx="16" cy="18" r="4" fill="#fb7185" opacity="0.6" />
           <circle cx="27" cy="24" r="5" fill="#fb7185" opacity="0.5" />
@@ -750,7 +799,7 @@ const renderTileGraphic = (symbolType: string, _isCovered: boolean = false, emoj
 
     case 'pulsar':
       return (
-        <svg viewBox="0 0 44 44" className={baseSvg} style={{ filter: filterStyle }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
           {/* Twin energetic beam cones */}
           <polygon points="22,22 10,4 34,4" fill="#38bdf8" opacity="0.75" />
           <polygon points="22,22 10,40 34,40" fill="#38bdf8" opacity="0.75" />
@@ -761,7 +810,7 @@ const renderTileGraphic = (symbolType: string, _isCovered: boolean = false, emoj
     // --- 12. 은하와 블랙홀 ---
     case 'andromeda':
       return (
-        <svg viewBox="0 0 44 44" className={baseSvg} style={{ filter: filterStyle }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
           {/* Spiral Galaxy Arms */}
           <ellipse cx="22" cy="22" rx="17" ry="9" fill="url(#grad_andromeda)" transform="rotate(-30 22 22)" />
           <circle cx="22" cy="22" r="4.5" fill="#ffffff" />
@@ -777,7 +826,7 @@ const renderTileGraphic = (symbolType: string, _isCovered: boolean = false, emoj
 
     case 'blackhole':
       return (
-        <svg viewBox="0 0 44 44" className={baseSvg} style={{ filter: filterStyle }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
           {/* Accretion Disk */}
           <ellipse cx="22" cy="22" rx="18" ry="7" fill="none" stroke="url(#bh_acc)" strokeWidth="4" />
           <ellipse cx="22" cy="22" rx="18" ry="7" fill="none" stroke="#f59e0b" strokeWidth="2" opacity="0.9" />
@@ -795,7 +844,7 @@ const renderTileGraphic = (symbolType: string, _isCovered: boolean = false, emoj
 
     case 'sombrero':
       return (
-        <svg viewBox="0 0 44 44" className={baseSvg} style={{ filter: filterStyle }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
           <circle cx="22" cy="22" r="8" fill="#ffffff" opacity="0.9" />
           <ellipse cx="22" cy="22" rx="18" ry="4" fill="#e2e8f0" opacity="0.75" />
           {/* Dark dust lane */}
@@ -805,7 +854,7 @@ const renderTileGraphic = (symbolType: string, _isCovered: boolean = false, emoj
 
     case 'quasar':
       return (
-        <svg viewBox="0 0 44 44" className={baseSvg} style={{ filter: filterStyle }}>
+        <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: filterStyle, overflow: 'visible' }}>
           <line x1="22" y1="4" x2="22" y2="40" stroke="#f43f5e" strokeWidth="3" strokeLinecap="round" />
           <circle cx="22" cy="22" r="9" fill="#facc15" />
           <circle cx="22" cy="22" r="4" fill="#ffffff" />
