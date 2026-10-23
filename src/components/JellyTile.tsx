@@ -4,6 +4,7 @@ import { AppLanguage, TileThemeItem } from '../types/game';
 import { CELESTIAL_ENGLISH } from '../data/celestialEnglish';
 import { soundManager } from '../utils/audio';
 import { AlienFace, AlienKind, ALIEN_TILE_STYLE } from './AlienTile';
+import { uniquifySvgIds, useSvgSuffix } from '../utils/uniqueSvgIds';
 
 interface JellyTileProps {
   item: TileThemeItem;
@@ -908,6 +909,7 @@ export const JellyTile: React.FC<JellyTileProps> = ({
   onBlockedClick,
 }) => {
   const [localShake, setLocalShake] = useState(false);
+  const svgSuffix = useSvgSuffix();
   const isShaking = isBlockedShaking || localShake;
 
   const handleClick = (e: React.MouseEvent) => {
@@ -1032,7 +1034,8 @@ export const JellyTile: React.FC<JellyTileProps> = ({
         {isAlien ? (
           <AlienFace kind={alienKind} className={size === 'sm' ? 'w-[30px] h-[30px]' : 'w-[52px] h-[52px] sm:w-[56px] sm:h-[56px]'} />
         ) : (
-          renderTileGraphic(item.symbolType, isCovered, item.emoji, size)
+          // 타일마다 그라데이션 id를 고유하게 (아이폰 사파리에서 그림 일부가 사라지는 문제 방지)
+          uniquifySvgIds(renderTileGraphic(item.symbolType, isCovered, item.emoji, size), svgSuffix)
         )}
 
         {/* Mixed small subtle 2-3 char planet name (한 레벨에 글이 있는 것과 없는 것이 함께 등장!) */}

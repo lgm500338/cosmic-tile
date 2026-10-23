@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { TileThemeItem } from '../types/game';
+import { uniquifySvgIds, useSvgSuffix } from '../utils/uniqueSvgIds';
 
 export type AlienKind = 'cover' | 'vanish' | 'mystery';
 
@@ -119,8 +120,12 @@ const MysteryFace: React.FC<{ className?: string }> = ({ className }) => (
   </svg>
 );
 
-export const AlienFace: React.FC<{ kind?: AlienKind; className?: string }> = ({ kind = 'cover', className }) =>
-  kind === 'vanish' ? <VanishUfo className={className} /> : kind === 'mystery' ? <MysteryFace className={className} /> : <CoverFace className={className} />;
+export const AlienFace: React.FC<{ kind?: AlienKind; className?: string }> = ({ kind = 'cover', className }) => {
+  // 그라데이션 id를 그림마다 고유하게 (아이폰 사파리 대응)
+  const suffix = useSvgSuffix();
+  const svg = (kind === 'vanish' ? VanishUfo({ className }) : kind === 'mystery' ? MysteryFace({ className }) : CoverFace({ className })) as React.ReactNode;
+  return <>{uniquifySvgIds(svg, suffix)}</>;
+};
 
 /** 외계인을 눌렀을 때: 빙글 돌며 위로 날아가 사라진다 */
 export const AlienFlyAway: React.FC<{ id: number; x: number; y: number; kind?: AlienKind }> = ({ id, x, y, kind = 'cover' }) => (
