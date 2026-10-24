@@ -265,6 +265,7 @@ interface AssignOptions {
   attempts: number;
   preferSingle?: boolean; // true면 같은 천체가 1개만 보이는 배치를 최대한 우선 (어려움)
   preferTriple?: boolean; // true면 같은 천체가 2~3개 함께 보이는 배치를 선호 (쉬움)
+  groupWindow?: number; // 한 묶음을 연 뒤 이 걸음 안에 3개를 완성 → 위 타일 한두 개만 걷으면 짝 3개가 보인다
 }
 
 const SEEN_THRESHOLD = 0.5;
@@ -311,7 +312,7 @@ function tryAssign(
   const left = new Map(quota);
   const intervals = new Map<string, Array<[number, number]>>(); // 천체별 "보이는 구간"
   // 섞기할 때는 슬롯에 이미 들어 있는 천체가 '진행 중인 묶음'으로 시작한다
-  const open: Array<{ type: string; count: number }> = initialOpen.map(g => ({ ...g }));
+  const open: Array<{ type: string; count: number; openedAt: number }> = initialOpen.map(g => ({ ...g, openedAt: 0 }));
   const types: string[] = new Array(n).fill('');
   let overlapScore = 0;
 
@@ -326,6 +327,13 @@ function tryAssign(
     type Option = { tile: number; kind: 'join' | 'new' | 'vanish'; type: string; overlap: number; idx?: number; w: number };
     const options: Option[] = [];
     const dockCount = open.reduce((sum, g) => sum + g.count, 0);
+    // 오래 열려 있는 묶음이 있으면 그 묶음부터 채운다 (짝이 멀리 숨지 않게)
+    let dueIdx = -1;
+    if (opt.groupWindow) {
+      open.forEach((g, idx) => {
+        if (step - g.openedAt >= opt.groupWindow! && (dueIdx < 0 || g.openedAt < open[dueIdx].openedAt)) dueIdx = idx;
+      });
+    }
     for (const t of frontier) {
       // 사라지는 외계인(장애물): 슬롯을 쓰지 않고 언제든 치울 수 있다
       if (obstacles.has(t)) {
@@ -334,6 +342,7 @@ function tryAssign(
       }
       const f = seenAt[t];
       open.forEach((g, idx) => {
+        if (dueIdx >= 0 && idx !== dueIdx) return;
         // 묶음을 완성하지 않는 경우엔 슬롯 여유가 있어야 한다
         if (g.count + 1 < 3 && dockCount + 1 > opt.maxOpen) return;
         const ov = overlapsWith(g.type, f, step);
@@ -341,7 +350,7 @@ function tryAssign(
         if (ov <= opt.maxVisible - 1) options.push({ tile: t, kind: 'join', type: g.type, overlap: ov, idx, w: 4 + (step - f) * 0.25 });
       });
       // 새 묶음은 슬롯에 한 칸 여유를 남길 때만 연다 (막다른 길 방지)
-      if (dockCount + 2 <= opt.maxOpen) {
+      if (dueIdx < 0 && dockCount + 2 <= opt.maxOpen) {
         for (const [type, q] of left) {
           if (q <= 0 || open.some(g => g.type === type)) continue;
           const ov = overlapsWith(type, f, step);
@@ -381,7 +390,7 @@ function tryAssign(
     intervals.get(choice.type)!.push([seenAt[t], step]);
     if (choice.kind === 'new') {
       left.set(choice.type, (left.get(choice.type) || 0) - 1);
-      open.push({ type: choice.type, count: 1 });
+      open.push({ type: choice.type, count: 1, openedAt: step });
     } else {
       const g = open[choice.idx!];
       g.count++;
@@ -462,7 +471,7 @@ export function reshuffleBoardSolvable(tiles: BoardTile[], dockTypeIds: string[]
 
   const difficulty = getDifficulty(levelNum);
   // 섞기는 슬롯 여유를 최대로(6칸) 보고 정답 순서를 찾는다
-  const opt = { ...difficulty, maxOpen: 6, preferSingle: true };
+  const opt = { ...difficulty, maxOpen: 6, preferSingle: true, groupWindow: difficulty.groupWindow ? 5 : undefined };
   const types =
     assignSolvableTypes(slots, quota, opt, Math.random, true, 80, initialOpen, obstacles) ||
     assignSolvableTypes(slots, quota, opt, Math.random, false, 80, initialOpen, obstacles);
@@ -530,8 +539,8 @@ function getDifficulty(levelNum: number): AssignOptions {
   // 1~50레벨: 같은 천체 3개가 한눈에 보이는 경우를 일부러 만든다 (찾는 재미)
   if (levelNum <= 9) return { maxVisible: 3, maxOpen: 4, attempts: 200, preferTriple: true };
   if (levelNum <= 50) return { maxVisible: 3, maxOpen: 5, attempts: 200, preferTriple: true };
-  // 51레벨부터: 최대 2개, 1개 위주
-  return { maxVisible: 2, maxOpen: 6, attempts: 200, preferSingle: true };
+  // 51레벨부터: 처음엔 3개가 다 보이지 않아도, 위 타일을 한두 개 걷어내면 짝 3개가 모이게
+  return { maxVisible: 3, maxOpen: 5, attempts: 300, preferTriple: true, groupWindow: 3 };
 }
 
 export interface ChapterPreset {

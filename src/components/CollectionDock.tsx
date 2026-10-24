@@ -102,7 +102,6 @@ export const CollectionDock: React.FC<CollectionDockProps> = ({
                     isInDock={true}
                     highlightMatch={isClearing}
                     language={language}
-                    onClick={() => onTileClick && onTileClick(index)}
                   />
                 </motion.div>
               );

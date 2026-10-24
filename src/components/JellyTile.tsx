@@ -961,7 +961,9 @@ export const JellyTile: React.FC<JellyTileProps> = ({
       onClick={handleClick}
       whileHover={!isCovered && !isInDock ? { scale: 1.05, y: -2 } : {}}
       whileTap={
-        isCovered
+        isInDock
+          ? {}
+          : isCovered
           ? { scale: 0.96 }
           : {
               scaleX: 1.15,
@@ -992,7 +994,9 @@ export const JellyTile: React.FC<JellyTileProps> = ({
         ${sizeClasses}
         ${elevationShadow}
         ${
-          isCovered
+          isInDock
+            ? 'cursor-default pointer-events-none'
+            : isCovered
             ? 'cursor-pointer active:brightness-95'
             : 'cursor-pointer active:shadow-none'
         }

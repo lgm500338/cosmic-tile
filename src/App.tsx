@@ -338,26 +338,7 @@ export default function App() {
     }
   }, [levelNumber, initLevel]);
 
-  // Handle clicking a tile in the collection dock (returns it to the board!)
-  const handleDockTileClick = (dockIndex: number) => {
-    if (dockIndex < 0 || dockIndex >= dockTiles.length || showGameOver || showStageClear) return;
-    const targetTile = dockTiles[dockIndex];
-    if (clearingIdsRef.current.has(targetTile.instanceId) || matchingIds.includes(targetTile.instanceId)) return;
-
-    soundManager.playWhoosh();
-
-    const updatedDock = dockTiles.filter((_, idx) => idx !== dockIndex);
-    setDockTiles(updatedDock);
-
-    setBoardTiles(prev => {
-      const restored = prev.map(t =>
-        t.id === targetTile.originalTileId ? { ...t, isCollected: false } : t
-      );
-      return recalculateOcclusion(restored);
-    });
-
-    setMoveHistory(prev => prev.filter(m => m.dockInstanceId !== targetTile.instanceId));
-  };
+  // 슬롯에 들어간 타일은 다시 보드로 돌아가지 않는다 (되돌리기는 부스터로만)
 
   // Handle tile click on board
   const handleBoardTileClick = (tile: BoardTile) => {
@@ -798,7 +779,6 @@ export default function App() {
           tileThemeMap={tileThemeMap}
           matchingIds={matchingIds}
           language={language}
-          onTileClick={handleDockTileClick}
         />
 
         {/* 3. Interactive Multilayered Game Board (Maximized hero playing field) */}
