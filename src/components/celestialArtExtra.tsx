@@ -56,7 +56,7 @@ export const EXTRA_VIEWBOX: Record<string, string> = {
   dimorphos: '3 3 38 38', apophis: '3 3 38 38', halebopp: '2 2 40 40', sl9: '2 2 40 40',
   neowise: '2 2 40 40', tempel1: '3 3 38 38', polaris: '3 3 38 38', vega: '3 3 38 38',
   altair: '3 3 38 38', proxima: '4 4 36 36', rigel: '3 3 38 38', antares: '4 4 36 36',
-  aldebaran: '4 4 36 36', canopus: '3 3 38 38', arcturus: '3 3 38 38', deneb: '3 3 38 38',
+  aldebaran: '4 4 36 36', canopus: '3 3 38 38', arcturus: '3 3 38 38', deneb: '4 3 36 36',
   pleiades: '4 4 36 36', pillars: '4 4 36 36', horsehead: '4 4 36 36', carina: '4 4 36 36',
   lagoon: '3 3 38 38', catseye: '4 4 36 36', veil: '4 4 36 36', milkyway: '3 3 38 38',
   lmc: '4 4 36 36', triangulum: '3 3 38 38', whirlpool: '3 3 38 38', cartwheel: '3 3 38 38',
@@ -525,19 +525,19 @@ export function renderExtraArt(symbolType: string): React.ReactElement | null {
         </>
       );
 
-    case 'deneb': // 백조자리 '북십자' 다섯 별, 꼬리의 데네브가 가장 밝게
+    case 'deneb': // 백조자리 '북십자' 다섯 별, 꼬리의 데네브가 가장 밝게 (타일 안에 쏙 들어가게)
       return (
         <>
-          <line x1="22" y1="6" x2="22" y2="38" stroke="#bae6fd" strokeWidth="1.2" opacity="0.8" />
-          <line x1="8" y1="19" x2="36" y2="19" stroke="#bae6fd" strokeWidth="1.2" opacity="0.8" />
-          <circle cx="22" cy="19" r="2.4" fill="#e0f2fe" />
-          <circle cx="8" cy="19" r="2" fill="#e0f2fe" />
-          <circle cx="36" cy="19" r="2" fill="#e0f2fe" />
-          <circle cx="22" cy="38" r="2" fill="#e0f2fe" />
-          <circle cx="22" cy="7" r="8" fill="#e0f2fe" opacity="0.45" />
-          <polygon points={starPoints(4, 8, 2.6, 22, 7)} fill="url(#g_deneb)" />
-          <circle cx="22" cy="7" r="2.6" fill="#ffffff" />
-          <defs>{lin('g_deneb', '#ffffff', '#bae6fd', '#38bdf8')}</defs>
+          <line x1="22" y1="12" x2="22" y2="36" stroke="#2563eb" strokeWidth="1.8" />
+          <line x1="9" y1="22" x2="35" y2="22" stroke="#2563eb" strokeWidth="1.8" />
+          <circle cx="22" cy="22" r="2.6" fill="#38bdf8" stroke="#1e3a8a" strokeWidth="0.6" />
+          <circle cx="9" cy="22" r="2.3" fill="#38bdf8" stroke="#1e3a8a" strokeWidth="0.6" />
+          <circle cx="35" cy="22" r="2.3" fill="#38bdf8" stroke="#1e3a8a" strokeWidth="0.6" />
+          <circle cx="22" cy="36" r="2.3" fill="#38bdf8" stroke="#1e3a8a" strokeWidth="0.6" />
+          <circle cx="22" cy="12" r="7" fill="#7dd3fc" opacity="0.55" />
+          <polygon points={starPoints(4, 7, 2.4, 22, 12)} fill="url(#g_deneb)" stroke="#1d4ed8" strokeWidth="0.6" />
+          <circle cx="22" cy="12" r="2.3" fill="#ffffff" />
+          <defs>{lin('g_deneb', '#e0f2fe', '#38bdf8', '#1d4ed8')}</defs>
         </>
       );
 
