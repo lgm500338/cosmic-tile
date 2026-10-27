@@ -122,7 +122,9 @@ function getLayoutTarget(levelNum: number) {
   if (levelNum <= 19) return { minN: 48, maxN: 75, minF: 12, maxF: 18, W: [5, 5], H: [6, 7], L: [4, 5] };
   if (levelNum <= 30) return { minN: 57, maxN: 84, minF: 12, maxF: 18, W: [5, 5], H: [6, 7], L: [5, 5] };
   if (levelNum <= 60) return { minN: 60, maxN: 90, minF: 12, maxF: 20, W: [5, 6], H: [6, 7], L: [5, 5] };
-  return { minN: 66, maxN: 96, minF: 12, maxF: 20, W: [6, 7], H: [6, 8], L: [5, 5] };
+  if (levelNum <= 100) return { minN: 66, maxN: 96, minF: 12, maxF: 20, W: [6, 7], H: [6, 8], L: [5, 5] };
+  // 101레벨~: 2~3층으로 얕게 끝나는 판을 막고 4~5층을 꼭 쌓는다 → 뒤쪽 타일이 살짝만 보이는 곳이 생긴다
+  return { minN: 69, maxN: 105, minF: 11, maxF: 19, W: [6, 7], H: [6, 8], L: [5, 5], minLayers: 4 };
 }
 
 function buildLayout(spec: LayoutSpec, rand: () => number): SlotPos[] {
@@ -199,11 +201,16 @@ function generateLayoutSlots(levelNum: number, variant = 0): SlotPos[] {
   const rand = seeded(levelNum * 7919 + 13 + variant * 101);
   const target = getLayoutTarget(levelNum);
   // 같은 모양으로 두 번 실패하면 다음 모양으로 넘어간다
-  const shape = levelNum <= 5 ? 'block' : SHAPE_ORDER[(levelNum - 6 + Math.floor(variant / 2)) % SHAPE_ORDER.length];
+  const baseShapeIdx = levelNum - 6 + Math.floor(variant / 2);
+  const minLayers = (target as { minLayers?: number }).minLayers ?? 0;
   const pick = (range: number[]) => range[0] + Math.floor(rand() * (range[1] - range[0] + 1));
 
   let best: SlotPos[] = [];
   let bestScore = Infinity;
+  // 높은 레벨에서 판 모양 때문에 층을 못 쌓으면(작은 탑·갈라진 판 등) 다음 모양으로 넘어간다
+  for (let shapeTry = 0; shapeTry < (minLayers ? SHAPE_ORDER.length : 1); shapeTry++) {
+  if (shapeTry > 0 && best.length && Math.max(...best.map(s => s.layer)) + 1 >= minLayers) break;
+  const shape = levelNum <= 5 ? 'block' : SHAPE_ORDER[(baseShapeIdx + shapeTry) % SHAPE_ORDER.length];
   for (let attempt = 0; attempt < 60; attempt++) {
     const spec: LayoutSpec = {
       W: pick(target.W),
@@ -221,12 +228,15 @@ function generateLayoutSlots(levelNum: number, variant = 0): SlotPos[] {
     const score =
       Math.max(0, target.minN - n) * 2 + Math.max(0, n - target.maxN) * 2 +
       Math.max(0, target.minF - f) * 5 + Math.max(0, f - target.maxF) * 5 +
-      Math.max(0, target.L[0] - layersUsed) * 10;
+      Math.max(0, target.L[0] - layersUsed) * 10 +
+      // 높은 레벨은 최소 층수를 반드시 지키도록 크게 감점
+      Math.max(0, minLayers - layersUsed) * 100;
     if (score < bestScore) {
       bestScore = score;
       best = slots;
       if (score === 0) break;
     }
+  }
   }
   return best;
 }
@@ -500,8 +510,8 @@ export const VANISH_TYPE = 'alien_vanish';
 
 function vanishCount(levelNum: number): number {
   if (levelNum < ALIEN_START_LEVEL) return 0;
-  if (levelNum < 50) return 3;
-  return 6;
+  // 그냥 사라지기만 하는 남색 UFO는 재미 요소가 적어서 많이 넣지 않는다
+  return 3;
 }
 
 /** 사라지는 외계인(장애물) 자리 고르기 — 15~20레벨은 처음부터 보이는 위층 칸에서만 */

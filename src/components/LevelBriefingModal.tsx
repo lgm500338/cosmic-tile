@@ -4,7 +4,7 @@ import { AppLanguage, LevelConfig, TileThemeItem } from '../types/game';
 import { Sparkles, Calendar, BookOpen, Orbit } from 'lucide-react';
 import { TRANSLATIONS } from '../data/translations';
 import { CELESTIAL_ENGLISH } from '../data/celestialEnglish';
-import { renderTileGraphic } from './JellyTile';
+import { renderTileGraphic, GlassShine, GLASS_TILE_BG, GLASS_TILE_INSET } from './JellyTile';
 import { uniquifySvgIds } from '../utils/uniqueSvgIds';
 
 interface LevelBriefingModalProps {
@@ -100,13 +100,13 @@ export const LevelBriefingModal: React.FC<LevelBriefingModalProps> = ({
               >
                 {/* 왼쪽: 게임 속 실제 타일과 똑같은 그림 (보고 바로 알아볼 수 있게) */}
                 <div
-                  className="relative w-[60px] h-[68px] rounded-2xl flex-shrink-0 border border-[#e2d9c8] bg-gradient-to-b from-[#ffffff] via-[#faf7f0] to-[#f4eee1] flex items-center justify-center shadow-[0_4px_0_rgba(180,160,140,0.9),0_8px_12px_rgba(0,0,0,0.35)] mt-0.5"
-                  style={{ boxShadow: 'inset 0 2px 3px rgba(255,255,255,1), inset 0 -3px 4px rgba(180,160,130,0.2), 0 4px 0 rgba(180,160,140,0.9), 0 8px 12px rgba(0,0,0,0.35)' }}
+                  className="relative w-[60px] h-[68px] rounded-2xl flex-shrink-0 border-white/90 flex items-center justify-center mt-0.5"
+                  style={{ borderWidth: 1.5, background: GLASS_TILE_BG, boxShadow: `${GLASS_TILE_INSET}, 0 4px 0 rgba(180,191,204,0.95), 0 8px 12px rgba(0,0,0,0.35)` }}
                 >
-                  <div className="absolute top-1 left-1.5 w-3/4 h-2 rounded-full pointer-events-none opacity-85 bg-gradient-to-b from-white/95 to-white/20" />
                   <div className="relative z-10 flex items-center justify-center">
                     {uniquifySvgIds(renderTileGraphic(body.symbolType, false, body.emoji, 'md'), `_brief_${body.id}`)}
                   </div>
+                  <GlassShine />
                 </div>
 
                 {/* Right: Comprehensive Educational Science Knowledge */}

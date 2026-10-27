@@ -70,6 +70,27 @@ const TIGHT_VIEWBOX: Record<string, string> = {
  "sombrero": "2.5 2.5 39.0 39.0",
  "quasar": "2.5 2.5 39.0 39.0"
 };
+/** 유리 광택 타일 (흰색 유지 + 큰 반사광) — 게임판·슬롯·브리핑 카드가 함께 쓴다 */
+export const GLASS_TILE_BG = 'radial-gradient(120% 90% at 50% 15%, #ffffff 0%, #f6f8fb 55%, #dfe6ee 100%)';
+export const GLASS_TILE_INSET = 'inset 0 -6px 10px rgba(120,140,170,0.35), inset 0 3px 6px rgba(255,255,255,1)';
+
+export const GlassShine: React.FC = () => (
+  <>
+    <div
+      className="absolute z-20 pointer-events-none"
+      style={{
+        top: '4%', left: '9%', right: '9%', height: '40%',
+        borderRadius: '40% 40% 45% 45% / 30% 30% 70% 70%',
+        background: 'linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.35) 55%, rgba(255,255,255,0) 100%)',
+      }}
+    />
+    <div
+      className="absolute z-20 pointer-events-none rounded-full"
+      style={{ bottom: '9%', right: '14%', width: '13%', aspectRatio: '1', background: 'rgba(255,255,255,0.95)', boxShadow: '0 0 6px #fff' }}
+    />
+  </>
+);
+
 const vb = (symbolType: string) => TIGHT_VIEWBOX[symbolType] || EXTRA_VIEWBOX[symbolType] || '0 0 44 44';
 
 // 비슷해 보이던 천체들의 색을 확실히 다르게 (회청색 공 6개, 빨간 공 3개, 노란 공 3개, 주황 공 3개, 혜성 2개)
@@ -953,11 +974,11 @@ export const JellyTile: React.FC<JellyTileProps> = ({
     : isInDock
     ? 'shadow-[0_4px_12px_rgba(0,0,0,0.3)]'
     : [
-        'shadow-[0_3px_0_rgba(180,160,140,0.85),0_6px_8px_rgba(0,0,0,0.22)]',
-        'shadow-[0_4px_0_rgba(180,160,140,0.9),0_8px_12px_rgba(0,0,0,0.28)]',
-        'shadow-[0_5px_0_rgba(170,150,130,0.95),0_10px_16px_rgba(0,0,0,0.32)]',
-        'shadow-[0_6px_0_rgba(160,140,120,1.0),0_12px_20px_rgba(0,0,0,0.36)]',
-        'shadow-[0_7px_0_rgba(150,130,110,1.0),0_14px_24px_rgba(0,0,0,0.4)]',
+        'shadow-[0_3px_0_rgba(185,195,207,0.9),0_6px_8px_rgba(0,0,0,0.22)]',
+        'shadow-[0_4px_0_rgba(180,191,204,0.95),0_8px_12px_rgba(0,0,0,0.28)]',
+        'shadow-[0_5px_0_rgba(170,182,197,1.0),0_10px_16px_rgba(0,0,0,0.32)]',
+        'shadow-[0_6px_0_rgba(160,173,189,1.0),0_12px_20px_rgba(0,0,0,0.36)]',
+        'shadow-[0_7px_0_rgba(150,164,181,1.0),0_14px_24px_rgba(0,0,0,0.4)]',
       ][Math.min(layer, 4)];
 
   // Strictly follow user's `showTileText` setting!
@@ -1023,20 +1044,12 @@ export const JellyTile: React.FC<JellyTileProps> = ({
         className={`absolute inset-0 rounded-2xl border transition-all duration-300 ${
           isAlien
             ? `${ALIEN_TILE_STYLE[alienKind].bg} ${ALIEN_TILE_STYLE[alienKind].border}`
-            : 'bg-gradient-to-b from-[#ffffff] via-[#faf7f0] to-[#f4eee1] border-[#e2d9c8]'
+            : 'border-white/90'
         }`}
         style={{
-          boxShadow: isAlien
-            ? ALIEN_TILE_STYLE[alienKind].shadow
-            : 'inset 0 2px 3px rgba(255,255,255,1), inset 0 -3px 4px rgba(180,160,130,0.2)',
-        }}
-      />
-
-      {/* 2. Top Porcelain Glint Reflection */}
-      <div
-        className="absolute top-1 left-1.5 w-3/4 h-2 rounded-full pointer-events-none opacity-85"
-        style={{
-          background: 'linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.2) 100%)',
+          borderWidth: isAlien ? undefined : 1.5,
+          background: isAlien ? undefined : GLASS_TILE_BG,
+          boxShadow: isAlien ? ALIEN_TILE_STYLE[alienKind].shadow : GLASS_TILE_INSET,
         }}
       />
 
@@ -1062,6 +1075,8 @@ export const JellyTile: React.FC<JellyTileProps> = ({
           </span>
         )}
       </div>
+      {/* 4. 유리 광택: 위쪽의 둥근 반사광 + 오른쪽 아래 반짝임 (그림 위에 살짝 덮여 젤리처럼 보이게) */}
+      <GlassShine />
     </motion.button>
   );
 };
