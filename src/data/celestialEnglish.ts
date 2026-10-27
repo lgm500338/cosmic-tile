@@ -7,7 +7,9 @@ export interface CelestialEnglishInfo {
   shortLabel: string;
 }
 
-export const CELESTIAL_ENGLISH: Record<string, CelestialEnglishInfo> = {
+import { EXTRA_CELESTIAL_ENGLISH } from './celestialExtra';
+
+const BASE_CELESTIAL_ENGLISH: Record<string, CelestialEnglishInfo> = {
   c_mercury: {
     name: 'Mercury',
     category: 'Innermost Terrestrial Planet',
@@ -28,7 +30,7 @@ export const CELESTIAL_ENGLISH: Record<string, CelestialEnglishInfo> = {
     name: 'Earth',
     category: 'The Living Blue Marble',
     discoveryDate: 'Our Home Planet',
-    description: 'The only celestial body in the known universe confirmed to sustain life, featuring dynamic liquid water oceans.',
+    description: 'Born about 4.6 billion years ago, the third planet from the Sun is a world full of life, with oceans covering about 71% of its surface.',
     factsDetail: 'Shielded from deadly cosmic rays by a powerful magnetosphere and a rich nitrogen-oxygen atmosphere.',
     shortLabel: 'EAR',
   },
@@ -85,7 +87,7 @@ export const CELESTIAL_ENGLISH: Record<string, CelestialEnglishInfo> = {
     category: 'Basaltic Main-Belt Asteroid',
     discoveryDate: 'Mar 29, 1807 (Heinrich Olbers)',
     description: 'The second-most massive asteroid in the main belt, preserving a differentiated crust and metallic core.',
-    factsDetail: 'Hosts Rheasilvia crater at its south pole, whose central peak rises 22 km—nearly 3 times higher than Everest.',
+    factsDetail: 'Hosts Rheasilvia crater at its south pole, whose central peak rises about 22 km—roughly 2.5 times the height of Everest.',
     shortLabel: 'VES',
   },
   c_pallas: {
@@ -109,7 +111,7 @@ export const CELESTIAL_ENGLISH: Record<string, CelestialEnglishInfo> = {
     category: 'King of Gas Giants',
     discoveryDate: 'Known since antiquity',
     description: 'The Solar System’s largest planet, possessing more mass than all other planets combined.',
-    factsDetail: 'Features the Great Red Spot, a colossal anticyclonic storm larger than Earth raging for over 350 years.',
+    factsDetail: 'Features the Great Red Spot, a colossal anticyclonic storm larger than Earth that has raged for centuries.',
     shortLabel: 'JUP',
   },
   c_io: {
@@ -157,7 +159,7 @@ export const CELESTIAL_ENGLISH: Record<string, CelestialEnglishInfo> = {
     category: 'Cryovolcanic Ice Moon',
     discoveryDate: 'Aug 28, 1789 (William Herschel)',
     description: 'Reflective ice moon erupting towering geysers of water vapor, silica nanograins, and organics from south polar rifts.',
-    factsDetail: 'Geysers feed Saturn’s outer E-ring and confirm a hydrothermal ocean beneath its pristine ice shell.',
+    factsDetail: 'Geysers feed Saturn’s outer E-ring and point to a hydrothermal ocean beneath its pristine ice shell.',
     shortLabel: 'ENC',
   },
   c_mimas: {
@@ -229,7 +231,7 @@ export const CELESTIAL_ENGLISH: Record<string, CelestialEnglishInfo> = {
     category: 'Fast-Spinning Ellipsoid Dwarf',
     discoveryDate: 'Dec 28, 2004 (Mike Brown Team)',
     description: 'Rapidly rotating dwarf planet stretched by centrifugal force into an elongated rugby-ball ellipsoid.',
-    factsDetail: 'Rotates once every 3.9 hours and is the only known trans-Neptunian object surrounded by its own ring.',
+    factsDetail: 'Rotates once every 3.9 hours and was the first dwarf planet found to have its own ring.',
     shortLabel: 'HAU',
   },
   c_halley: {
@@ -317,7 +319,7 @@ export const CELESTIAL_ENGLISH: Record<string, CelestialEnglishInfo> = {
     category: 'Red Supergiant in Orion',
     discoveryDate: 'Known since antiquity',
     description: 'A behemoth dying red supergiant so immense that if placed at our Sun’s location, it would engulf Jupiter.',
-    factsDetail: 'Expected to detonate as a spectacular supernova within 100,000 years, shining as bright as the full Moon.',
+    factsDetail: 'Expected to detonate as a spectacular supernova within 100,000 years, possibly shining nearly as bright as the Moon.',
     shortLabel: 'BET',
   },
   c_pulsar: {
@@ -333,7 +335,7 @@ export const CELESTIAL_ENGLISH: Record<string, CelestialEnglishInfo> = {
     category: 'Majestic Spiral Galaxy (M31)',
     discoveryDate: 'Documented 964 AD (Al-Sufi)',
     description: 'Our nearest major spiral neighbor containing over one trillion stars across a disk 220,000 light-years wide.',
-    factsDetail: 'Racing toward the Milky Way at 110 km/s and destined to merge into giant ‘Milkomeda’ in 4.5 billion years.',
+    factsDetail: 'Racing toward the Milky Way at 110 km/s and may merge with it into a giant ‘Milkomeda’ billions of years from now.',
     shortLabel: 'AND',
   },
   c_blackhole: {
@@ -361,3 +363,5 @@ export const CELESTIAL_ENGLISH: Record<string, CelestialEnglishInfo> = {
     shortLabel: 'QSR',
   },
 };
+
+export const CELESTIAL_ENGLISH: Record<string, CelestialEnglishInfo> = { ...BASE_CELESTIAL_ENGLISH, ...EXTRA_CELESTIAL_ENGLISH };

@@ -103,12 +103,12 @@ export const HowToPlayModal: React.FC<HowToPlayModalProps> = ({ language = 'ko',
                 {isEn ? (
                   <>
                     • <strong>Tactile Jelly Animation</strong>: Dynamic bounce, realistic drop shadows, and synthesized audio frequencies.<br />
-                    • <strong>Cosmic Science Exploration</strong>: 44 real celestial bodies with discovery dates and astrophysical encyclopedic facts!
+                    • <strong>Cosmic Science Exploration</strong>: 100 real celestial bodies with discovery dates and astrophysical encyclopedic facts!
                   </>
                 ) : (
                   <>
                     • <strong>말랑말랑 3D 젤리 텍스처</strong>: 누를 때마다 탄성 있게 찌그러지고 통통 튀는 Web Audio 기반 촉각 젤리 반응.<br />
-                    • <strong>44종 천체 과학 탐사</strong>: 행성, 위성, 혜성, 펄서, 블랙홀의 실제 발견 연도와 천체물리학 백과사전 제공!
+                    • <strong>100종 천체 과학 탐사</strong>: 행성, 위성, 혜성, 별, 성운, 은하, 블랙홀, 탐사선의 실제 발견 연도와 천체물리학 백과사전 제공!
                   </>
                 )}
               </div>

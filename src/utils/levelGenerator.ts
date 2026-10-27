@@ -87,6 +87,9 @@ const OFFSET_PATTERNS: Array<Array<[number, number]>> = [
   [[0, 0], [0.5, 0.5], [0.5, 0.5], [0, 0], [0, 0]],   // 엇갈림 + 바로 쌓기
 ];
 
+/** 이 레벨부터 '같은 자리 바로 뒤에 다른 타일' 쌓기가 나온다 */
+export const SAME_SPOT_STACK_LEVEL = 300;
+
 function seeded(seed: number) {
   let t = seed >>> 0;
   return () => {
@@ -207,8 +210,9 @@ function generateLayoutSlots(levelNum: number, variant = 0): SlotPos[] {
       H: pick(target.H),
       layers: pick(target.L),
       shape,
-      // 100레벨까지는 바로 위에 똑같이 쌓는 패턴(3·4번)을 쓰지 않는다 → 아래 타일이 항상 일부라도 보임
-      pattern: Math.floor(rand() * (levelNum <= 100 ? 3 : OFFSET_PATTERNS.length)),
+      // 300레벨 전까지는 같은 자리 바로 뒤에 다른 타일을 숨겨 쌓는 패턴(3·4번)을 쓰지 않는다
+      // → 맨 위 타일을 눌렀을 때 바로 뒤에서 예상 못 한 타일이 나오지 않는다 (300레벨부터 고난도 요소로 등장)
+      pattern: Math.floor(rand() * (levelNum < SAME_SPOT_STACK_LEVEL ? 3 : OFFSET_PATTERNS.length)),
     };
     const slots = buildLayout(spec, rand);
     const n = slots.length;
@@ -583,7 +587,7 @@ export const CHAPTER_PRESETS: ChapterPreset[] = [
     briefing: {
       title: '지구와 달',
       titleEn: 'Earth & Moon',
-      description: '지구는 표면의 70%가 액체 상태의 물로 덮여 있는 유일한 생명의 별이며, 달은 지구 지름의 4분의 1 크기로 조석 현상을 일으켜 지구의 자전축을 23.5도로 안정시킵니다.',
+      description: '지구는 약 46억 년 전 태어나 표면의 약 71%가 바다로 덮인 생명의 별이며, 달은 지구 지름의 4분의 1 크기로 조석 현상을 일으켜 지구의 자전축을 23.5도로 안정시킵니다.',
       descriptionEn: 'Earth is our water world home holding vibrant life, accompanied by the Moon whose gravitational tides stabilize Earth’s 23.5° axial tilt.',
       tip: '',
       featuredTiles: ['c_earth', 'c_moon', 'c_iss'],
@@ -598,7 +602,7 @@ export const CHAPTER_PRESETS: ChapterPreset[] = [
     briefing: {
       title: '화성과 위성들',
       titleEn: 'Mars & Its Moons',
-      description: '화성은 산화철 성분으로 붉게 빛나며 에베레스트 3배 높이의 올림포스 화산이 있습니다. 곁에는 울퉁불퉁한 감자 모양의 두 소행성 위성 포보스와 데이모스가 돕니다.',
+      description: '화성은 산화철 성분으로 붉게 빛나며 에베레스트의 약 2.5배 높이인 올림포스 화산이 있습니다. 곁에는 울퉁불퉁한 감자 모양의 두 소행성 위성 포보스와 데이모스가 돕니다.',
       descriptionEn: 'Mars shines red with iron oxide soil and hosts Olympus Mons, the solar system’s tallest volcano, orbited by asteroid-like potato moons Phobos and Deimos.',
       tip: '',
       featuredTiles: ['c_mars', 'c_phobos', 'c_deimos'],
@@ -613,8 +617,8 @@ export const CHAPTER_PRESETS: ChapterPreset[] = [
     briefing: {
       title: '소행성대의 보물들',
       titleEn: 'Asteroid Belt Treasures',
-      description: '화성과 목성 사이 소행성대에서 가장 거대한 왜소행성 세레스는 지하 얼음 바다를, 베스타는 거대한 남극 분화구를, 베누는 다이아몬드형 주사위 형태를 지녔습니다.',
-      descriptionEn: 'Dwarf planet Ceres hides a subterranean ocean, rocky Vesta boasts a 22km south pole crater, and diamond-shaped Bennu holds pristine carbonaceous matter.',
+      description: '화성과 목성 사이 소행성대에서 가장 거대한 왜소행성 세레스는 땅속 소금물 층을, 베스타는 거대한 남극 분화구를, 베누는 다이아몬드형 주사위 형태를 지녔습니다.',
+      descriptionEn: 'Dwarf planet Ceres may hide deep brine reservoirs, rocky Vesta boasts a 22km south pole crater, and diamond-shaped Bennu holds pristine carbonaceous matter.',
       tip: '',
       featuredTiles: ['c_ceres', 'c_vesta', 'c_pallas', 'c_bennu'],
     },
@@ -628,12 +632,12 @@ export const CHAPTER_PRESETS: ChapterPreset[] = [
     briefing: {
       title: '목성과 갈릴레이 위성',
       titleEn: 'Jupiter & Galilean Moons',
-      description: '목성은 태양계 최대 가스 행성으로 300년 된 대적점이 소용돌이칩니다. 화산 위성 이오, 지하 얼음 바다 위성 유로파, 수성보다 큰 거대 위성 가니메데가 공전합니다.',
-      descriptionEn: 'King of planets Jupiter commands the Great Red Spot storm, orbited by volcanic Io, ocean-harboring Europa, and giant Ganymede which is larger than Mercury.',
+      description: '목성은 태양계 최대 가스 행성으로 수백 년 동안 이어져 온 대적점이 소용돌이칩니다. 화산 위성 이오, 지하 얼음 바다 위성 유로파, 수성보다 큰 거대 위성 가니메데, 크레이터로 뒤덮인 칼리스토가 공전합니다.',
+      descriptionEn: 'King of planets Jupiter commands the Great Red Spot storm, orbited by volcanic Io, ocean-harboring Europa, giant Ganymede which is larger than Mercury, and cratered Callisto.',
       tip: '',
-      featuredTiles: ['c_jupiter', 'c_io', 'c_europa', 'c_ganymede'],
+      featuredTiles: ['c_jupiter', 'c_io', 'c_europa', 'c_ganymede', 'c_callisto'],
     },
-    tileIds: ['c_jupiter', 'c_io', 'c_europa', 'c_ganymede'],
+    tileIds: ['c_jupiter', 'c_io', 'c_europa', 'c_ganymede', 'c_callisto'],
   },
   // 6. 토성과 고리의 위성들
   {
@@ -650,6 +654,21 @@ export const CHAPTER_PRESETS: ChapterPreset[] = [
     },
     tileIds: ['c_saturn', 'c_titan', 'c_enceladus', 'c_mimas'],
   },
+  // 토성의 얼음 위성들
+  {
+    chapterTitle: '토성의 얼음 위성들',
+    chapterTitleEn: 'Icy Moons of Saturn',
+    defaultFailureRate: 34,
+    briefing: {
+      title: '토성의 얼음 위성들',
+      titleEn: 'Icy Moons of Saturn',
+      description: '토성 곁에는 하얀 얼음 위성들이 줄지어 돕니다. 크레이터로 뒤덮인 레아, 두 얼굴의 이아페투스, 얼음 절벽 줄무늬의 디오네, 거대한 크레이터를 지닌 테티스를 만나 보세요.',
+      descriptionEn: 'Saturn is circled by icy white moons: cratered Rhea, two-faced Iapetus, cliff-streaked Dione, and Tethys with its giant crater.',
+      tip: '',
+      featuredTiles: ['c_rhea', 'c_iapetus', 'c_dione', 'c_tethys'],
+    },
+    tileIds: ['c_rhea', 'c_iapetus', 'c_dione', 'c_tethys'],
+  },
   // 7. 천왕성과 해왕성
   {
     chapterTitle: '천왕성과 해왕성',
@@ -664,6 +683,36 @@ export const CHAPTER_PRESETS: ChapterPreset[] = [
       featuredTiles: ['c_uranus', 'c_neptune', 'c_triton', 'c_miranda'],
     },
     tileIds: ['c_uranus', 'c_neptune', 'c_triton', 'c_miranda'],
+  },
+  // 천왕성의 셰익스피어 위성들
+  {
+    chapterTitle: '천왕성의 셰익스피어 위성들',
+    chapterTitleEn: 'Uranus’s Shakespearean Moons',
+    defaultFailureRate: 45,
+    briefing: {
+      title: '천왕성의 셰익스피어 위성들',
+      titleEn: 'Uranus’s Shakespearean Moons',
+      description: '천왕성의 위성들은 셰익스피어와 포프의 작품 속 인물 이름을 가졌습니다. 요정 여왕 티타니아와 요정 왕 오베론, 공기의 요정 아리엘, 어두운 움브리엘이 함께 돕니다.',
+      descriptionEn: 'The moons of Uranus are named after characters from Shakespeare and Pope: fairy queen Titania, fairy king Oberon, airy Ariel, and dark Umbriel.',
+      tip: '',
+      featuredTiles: ['c_titania', 'c_oberon', 'c_ariel', 'c_umbriel'],
+    },
+    tileIds: ['c_titania', 'c_oberon', 'c_ariel', 'c_umbriel'],
+  },
+  // 모양도 궤도도 독특한 위성들
+  {
+    chapterTitle: '모양도 궤도도 독특한 위성들',
+    chapterTitleEn: 'Odd-Shaped & Odd-Orbit Moons',
+    defaultFailureRate: 50,
+    briefing: {
+      title: '모양도 궤도도 독특한 위성들',
+      titleEn: 'Odd-Shaped & Odd-Orbit Moons',
+      description: '모든 위성이 둥글지는 않습니다. 붉은 감자 아말테아, 스펀지 같은 히페리온, 거꾸로 도는 포이베, 각진 프로테우스, 아주 길쭉한 궤도를 도는 네레이드처럼 개성 넘치는 위성들입니다.',
+      descriptionEn: 'Not every moon is round: red potato Amalthea, sponge-like Hyperion, backward-orbiting Phoebe, boxy Proteus, and Nereid on its stretched-out orbit.',
+      tip: '',
+      featuredTiles: ['c_amalthea', 'c_hyperion', 'c_phoebe', 'c_proteus', 'c_nereid'],
+    },
+    tileIds: ['c_amalthea', 'c_hyperion', 'c_phoebe', 'c_proteus', 'c_nereid'],
   },
   // 8. 카이퍼 벨트와 왜소행성
   {
@@ -680,6 +729,36 @@ export const CHAPTER_PRESETS: ChapterPreset[] = [
     },
     tileIds: ['c_pluto', 'c_charon', 'c_makemake', 'c_haumea'],
   },
+  // 태양계의 끝자락
+  {
+    chapterTitle: '태양계의 끝자락',
+    chapterTitleEn: 'Edge of the Solar System',
+    defaultFailureRate: 58,
+    briefing: {
+      title: '태양계의 끝자락',
+      titleEn: 'Edge of the Solar System',
+      description: '해왕성 너머 아주 먼 곳에는 명왕성보다 무거운 에리스, 1만 년 넘게 걸려 태양을 도는 세드나, 눈사람 모양의 아로코스가 있습니다. 뉴호라이즌스호가 이곳까지 날아갔습니다.',
+      descriptionEn: 'Far beyond Neptune lie Eris, more massive than Pluto, Sedna on its 11,000-year orbit, and snowman-shaped Arrokoth, visited by New Horizons.',
+      tip: '',
+      featuredTiles: ['c_eris', 'c_sedna', 'c_arrokoth', 'c_newhorizons'],
+    },
+    tileIds: ['c_eris', 'c_sedna', 'c_arrokoth', 'c_newhorizons'],
+  },
+  // 지구 가까이 오는 소행성
+  {
+    chapterTitle: '지구 가까이 오는 소행성',
+    chapterTitleEn: 'Near-Earth Asteroids',
+    defaultFailureRate: 62,
+    briefing: {
+      title: '지구 가까이 오는 소행성',
+      titleEn: 'Near-Earth Asteroids',
+      description: '탐사선이 직접 찾아가 흙을 가져온 류구와 이토카와, 처음으로 착륙한 에로스, 일부러 부딪쳐 길을 바꾼 디모르포스, 2029년 지구 가까이 지나갈 아포피스를 만나 보세요.',
+      descriptionEn: 'Meet Ryugu and Itokawa, whose soil was brought to Earth, Eros, the first asteroid landed on, Dimorphos, nudged by DART, and Apophis, passing close in 2029.',
+      tip: '',
+      featuredTiles: ['c_ryugu', 'c_itokawa', 'c_eros', 'c_dimorphos', 'c_apophis'],
+    },
+    tileIds: ['c_ryugu', 'c_itokawa', 'c_eros', 'c_dimorphos', 'c_apophis'],
+  },
   // 9. 신비한 혜성과 성간 방문자
   {
     chapterTitle: '신비한 혜성과 성간 방문자',
@@ -694,6 +773,21 @@ export const CHAPTER_PRESETS: ChapterPreset[] = [
       featuredTiles: ['c_halley', 'c_oumuamua', 'c_borisov', 'c_comet67p'],
     },
     tileIds: ['c_halley', 'c_oumuamua', 'c_borisov', 'c_comet67p'],
+  },
+  // 밤하늘을 수놓은 대혜성
+  {
+    chapterTitle: '밤하늘을 수놓은 대혜성',
+    chapterTitleEn: 'Great Comets',
+    defaultFailureRate: 68,
+    briefing: {
+      title: '밤하늘을 수놓은 대혜성',
+      titleEn: 'Great Comets',
+      description: '1년 반 동안 맨눈으로 보였던 헤일-밥 혜성, 목성에 부딪친 슈메이커-레비 9, 2020년 여름 하늘의 니오와이즈, 탐사선이 속을 들여다본 템펠 1 혜성 이야기입니다.',
+      descriptionEn: 'Hale-Bopp, visible for a year and a half, Shoemaker-Levy 9, which struck Jupiter, NEOWISE of summer 2020, and Tempel 1, probed by Deep Impact.',
+      tip: '',
+      featuredTiles: ['c_halebopp', 'c_sl9', 'c_neowise', 'c_tempel1'],
+    },
+    tileIds: ['c_halebopp', 'c_sl9', 'c_neowise', 'c_tempel1'],
   },
   // 10. 성운과 별들의 요람
   {
@@ -710,6 +804,36 @@ export const CHAPTER_PRESETS: ChapterPreset[] = [
     },
     tileIds: ['c_orion', 'c_crab', 'c_ring', 'c_helix'],
   },
+  // 별이 태어나는 성운
+  {
+    chapterTitle: '별이 태어나는 성운',
+    chapterTitleEn: 'Where Stars Are Born',
+    defaultFailureRate: 80,
+    briefing: {
+      title: '별이 태어나는 성운',
+      titleEn: 'Where Stars Are Born',
+      description: '독수리 성운의 창조의 기둥, 말 머리 모양의 암흑 성운, 우주 절벽이 있는 용골자리 성운, 분홍빛 석호 성운에서 지금도 새로운 별들이 태어나고 있습니다.',
+      descriptionEn: 'New stars are being born in the Pillars of Creation, the Horsehead Nebula, the Carina Nebula with its Cosmic Cliffs, and the pink Lagoon Nebula.',
+      tip: '',
+      featuredTiles: ['c_pillars', 'c_horsehead', 'c_carina', 'c_lagoon'],
+    },
+    tileIds: ['c_pillars', 'c_horsehead', 'c_carina', 'c_lagoon'],
+  },
+  // 별이 남긴 마지막 숨결
+  {
+    chapterTitle: '별이 남긴 마지막 숨결',
+    chapterTitleEn: 'A Star’s Final Breath',
+    defaultFailureRate: 84,
+    briefing: {
+      title: '별이 남긴 마지막 숨결',
+      titleEn: 'A Star’s Final Breath',
+      description: '별은 수명을 다하면 가스 껍질을 우주로 내보냅니다. 고양이 눈을 닮은 행성상 성운과 초신성 폭발이 남긴 비단 커튼 같은 베일 성운을 만나 보세요.',
+      descriptionEn: 'When stars die they shed their gas into space: see the Cat’s Eye planetary nebula and the silky Veil Nebula left by a supernova.',
+      tip: '',
+      featuredTiles: ['c_catseye', 'c_veil'],
+    },
+    tileIds: ['c_catseye', 'c_veil'],
+  },
   // 11. 항성의 일생과 펄서
   {
     chapterTitle: '항성의 일생과 펄서',
@@ -725,6 +849,51 @@ export const CHAPTER_PRESETS: ChapterPreset[] = [
     },
     tileIds: ['c_sun', 'c_sirius', 'c_betelgeuse', 'c_pulsar'],
   },
+  // 견우와 직녀, 여름밤의 별
+  {
+    chapterTitle: '견우와 직녀, 여름밤의 별',
+    chapterTitleEn: 'Summer Stars: The Weaver & the Cowherd',
+    defaultFailureRate: 90,
+    briefing: {
+      title: '견우와 직녀, 여름밤의 별',
+      titleEn: 'Summer Stars: The Weaver & the Cowherd',
+      description: '은하수를 사이에 둔 직녀성과 견우성, 그리고 백조자리 꼬리의 데네브가 여름의 대삼각형을 이룹니다. 북반구 하늘에서 가장 밝은 아크투루스도 함께 빛납니다.',
+      descriptionEn: 'Vega and Altair face each other across the Milky Way and form the Summer Triangle with Deneb, while Arcturus shines brightest in the northern sky.',
+      tip: '',
+      featuredTiles: ['c_vega', 'c_altair', 'c_deneb', 'c_arcturus'],
+    },
+    tileIds: ['c_vega', 'c_altair', 'c_deneb', 'c_arcturus'],
+  },
+  // 겨울밤의 별과 좀생이별
+  {
+    chapterTitle: '겨울밤의 별과 좀생이별',
+    chapterTitleEn: 'Winter Stars & the Pleiades',
+    defaultFailureRate: 92,
+    briefing: {
+      title: '겨울밤의 별과 좀생이별',
+      titleEn: 'Winter Stars & the Pleiades',
+      description: '오리온자리의 푸른 리겔, 황소의 붉은 눈 알데바란, 보석 같은 좀생이별, 그리고 제주에서 보면 오래 산다는 노인성까지 겨울 하늘의 별들입니다.',
+      descriptionEn: 'Winter brings blue Rigel, Aldebaran the Bull’s red eye, the jewel-like Pleiades, and Canopus, the Star of Longevity seen from Jeju.',
+      tip: '',
+      featuredTiles: ['c_rigel', 'c_aldebaran', 'c_pleiades', 'c_canopus'],
+    },
+    tileIds: ['c_rigel', 'c_aldebaran', 'c_pleiades', 'c_canopus'],
+  },
+  // 길잡이별과 이웃 별
+  {
+    chapterTitle: '길잡이별과 이웃 별',
+    chapterTitleEn: 'Guide Star & Neighbor Stars',
+    defaultFailureRate: 93,
+    briefing: {
+      title: '길잡이별과 이웃 별',
+      titleEn: 'Guide Star & Neighbor Stars',
+      description: '오래전부터 길을 알려 준 북극성, 태양 다음으로 가장 가까운 프록시마 센타우리, 전갈자리의 붉은 심장 안타레스를 만나 보세요.',
+      descriptionEn: 'Meet Polaris, the age-old guide star, Proxima Centauri, our nearest stellar neighbor, and Antares, the red heart of the Scorpion.',
+      tip: '',
+      featuredTiles: ['c_polaris', 'c_proxima', 'c_antares'],
+    },
+    tileIds: ['c_polaris', 'c_proxima', 'c_antares'],
+  },
   // 12. 은하와 시공간의 블랙홀
   {
     chapterTitle: '은하와 시공간의 블랙홀',
@@ -739,6 +908,66 @@ export const CHAPTER_PRESETS: ChapterPreset[] = [
       featuredTiles: ['c_andromeda', 'c_blackhole', 'c_sombrero', 'c_quasar'],
     },
     tileIds: ['c_andromeda', 'c_blackhole', 'c_sombrero', 'c_quasar'],
+  },
+  // 우리은하와 이웃 은하
+  {
+    chapterTitle: '우리은하와 이웃 은하',
+    chapterTitleEn: 'Our Galaxy & Its Neighbors',
+    defaultFailureRate: 96,
+    briefing: {
+      title: '우리은하와 이웃 은하',
+      titleEn: 'Our Galaxy & Its Neighbors',
+      description: '태양계가 사는 우리은하와 그 곁을 도는 대마젤란은하, 이웃 삼각형자리 은하, 소용돌이치는 소용돌이 은하, 수레바퀴 모양의 고리 은하까지 은하 여행을 떠나 보세요.',
+      descriptionEn: 'Tour our Milky Way, its companion the Large Magellanic Cloud, the Triangulum Galaxy, the swirling Whirlpool, and the ring-shaped Cartwheel.',
+      tip: '',
+      featuredTiles: ['c_milkyway', 'c_lmc', 'c_triangulum', 'c_whirlpool', 'c_cartwheel'],
+    },
+    tileIds: ['c_milkyway', 'c_lmc', 'c_triangulum', 'c_whirlpool', 'c_cartwheel'],
+  },
+  // 블랙홀을 사진으로 찍다
+  {
+    chapterTitle: '블랙홀을 사진으로 찍다',
+    chapterTitleEn: 'Photographing Black Holes',
+    defaultFailureRate: 97,
+    briefing: {
+      title: '블랙홀을 사진으로 찍다',
+      titleEn: 'Photographing Black Holes',
+      description: '2019년 인류는 처음으로 M87 은하 중심의 블랙홀을 사진으로 찍었고, 2022년에는 우리은하 한가운데의 궁수자리 A*의 모습도 공개했습니다.',
+      descriptionEn: 'In 2019 humanity photographed a black hole for the first time, in galaxy M87, and in 2022 revealed Sagittarius A* at the heart of our own galaxy.',
+      tip: '',
+      featuredTiles: ['c_sgra', 'c_m87'],
+    },
+    tileIds: ['c_sgra', 'c_m87'],
+  },
+  // 우주를 바라본 탐사선과 망원경
+  {
+    chapterTitle: '우주를 바라본 탐사선과 망원경',
+    chapterTitleEn: 'Probes & Space Telescopes',
+    defaultFailureRate: 97,
+    briefing: {
+      title: '우주를 바라본 탐사선과 망원경',
+      titleEn: 'Probes & Space Telescopes',
+      description: '태양계 바깥까지 날아간 보이저 1호, 30년 넘게 우주를 찍어 온 허블, 금빛 거울로 먼 우주를 보는 제임스 웹 우주망원경이 인류의 눈이 되어 주었습니다.',
+      descriptionEn: 'Voyager 1, now beyond the Sun’s bubble, Hubble, imaging the cosmos for over 30 years, and the golden-mirrored James Webb have been humanity’s eyes.',
+      tip: '',
+      featuredTiles: ['c_voyager1', 'c_hubble', 'c_jwst'],
+    },
+    tileIds: ['c_voyager1', 'c_hubble', 'c_jwst'],
+  },
+  // 한국의 우주 도전
+  {
+    chapterTitle: '한국의 우주 도전',
+    chapterTitleEn: 'Korea’s Space Journey',
+    defaultFailureRate: 97,
+    briefing: {
+      title: '한국의 우주 도전',
+      titleEn: 'Korea’s Space Journey',
+      description: '우리 기술로 만든 누리호가 위성을 궤도에 올렸고, 한국 최초의 달 탐사선 다누리는 달 궤도에서 달을 관측해 왔습니다. 다음 꿈은 무엇일까요?',
+      descriptionEn: 'Korea’s own Nuri rocket put satellites into orbit, and Danuri, Korea’s first lunar probe, has been observing the Moon from orbit. What will be next?',
+      tip: '',
+      featuredTiles: ['c_nuri', 'c_danuri', 'c_moon'],
+    },
+    tileIds: ['c_nuri', 'c_danuri', 'c_moon'],
   },
 ];
 

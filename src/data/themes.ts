@@ -1,7 +1,8 @@
 import { GameTheme, TileThemeItem } from '../types/game';
+import { EXTRA_CELESTIAL_TILES } from './celestialExtra';
 
-// Comprehensive catalog of 44 celestial bodies across 12 distinct cosmic exploration chapters
-export const CELESTIAL_TILES: TileThemeItem[] = [
+// 천체 100종: 기존 44종 + 새로 추가한 56종(celestialExtra.ts)
+const BASE_CELESTIAL_TILES: TileThemeItem[] = [
   // --- Chapter 1: 내행성 (수성과 금성) ---
   {
     id: 'c_mercury',
@@ -53,7 +54,7 @@ export const CELESTIAL_TILES: TileThemeItem[] = [
     symbolType: 'earth',
     category: '생명체의 요람 (지구형 행성)',
     discoveryDate: '인류의 고향 행성',
-    description: '표면의 70%가 액체 상태의 물로 덮여 있는 유일한 생명의 별입니다.',
+    description: '약 46억 년 전 태어난 태양계의 세 번째 행성으로, 표면의 약 71%가 바다로 덮인 생명의 별입니다.',
     factsDetail: '강력한 지구 자기장과 오존층이 우주 방사선을 막아 생명체가 살 수 있는 환경을 유지합니다.',
   },
   {
@@ -106,7 +107,7 @@ export const CELESTIAL_TILES: TileThemeItem[] = [
     symbolType: 'mars',
     category: '붉은 행성 (태양계 제4행성)',
     discoveryDate: '고대부터 관측 (전쟁의 신 아레스/마르스)',
-    description: '표면에 산화철이 풍부하여 붉게 보이며 에베레스트 3배 높이의 올림포스산이 있습니다.',
+    description: '표면에 산화철이 풍부하여 붉게 보이며 에베레스트의 약 2.5배 높이인 올림포스산이 있습니다.',
     factsDetail: '태양계 최대 규모인 길이 4,000km, 깊이 7km의 거대한 매리너 협곡이 있습니다.',
   },
   {
@@ -123,7 +124,7 @@ export const CELESTIAL_TILES: TileThemeItem[] = [
     symbolType: 'phobos',
     category: '화성 제1위성 (불규칙 소행성형)',
     discoveryDate: '1877년 8월 18일 (아사프 홀 발견)',
-    description: '화성 중심에서 불과 6,000km 상공을 도는 울퉁불퉁한 감자 모양의 제1위성입니다.',
+    description: '화성 표면에서 불과 약 6,000km 상공을 도는 울퉁불퉁한 감자 모양의 제1위성입니다.',
     factsDetail: '화성에 매년 1.8cm씩 가까워지고 있어 5천만 년 후에는 부서져 화성의 고리가 됩니다.',
   },
   {
@@ -159,7 +160,7 @@ export const CELESTIAL_TILES: TileThemeItem[] = [
     symbolType: 'ceres',
     category: '소행성대 유일의 왜소행성',
     discoveryDate: '1801년 1월 1일 (주세페 피아치 발견)',
-    description: '소행성대 유일의 둥근 왜소행성으로 중심부에 거대한 얼음 바다가 있습니다.',
+    description: '소행성대 유일의 둥근 왜소행성으로, 땅속 깊은 곳에 소금물 층이 있는 것으로 추정됩니다.',
     factsDetail: '소행성대 전체 질량의 3분의 1을 차지하며 오카토르 분화구에 밝은 탄산나트륨 소금 퇴적물이 있습니다.',
   },
   {
@@ -174,7 +175,10 @@ export const CELESTIAL_TILES: TileThemeItem[] = [
     textColor: 'text-amber-950',
     badgeBg: 'bg-amber-400',
     symbolType: 'vesta',
-    description: '남극에 높이 22km의 거대한 분화구 레아실비아를 품은 소행성대 제2의 천체입니다.',
+    description: '남극에 지름 약 500km의 레아실비아 충돌구가 있으며, 그 가운데 봉우리는 높이가 약 22km에 이릅니다.',
+    category: '소행성대 제2의 천체 (원시 행성)',
+    discoveryDate: '1807년 3월 29일 (하인리히 올베르스 발견)',
+    factsDetail: '가끔 맨눈으로도 보이는 가장 밝은 소행성이며, 2011년부터 돈(Dawn) 탐사선이 약 14개월간 가까이서 관측했습니다.',
   },
   {
     id: 'c_pallas',
@@ -189,6 +193,9 @@ export const CELESTIAL_TILES: TileThemeItem[] = [
     badgeBg: 'bg-purple-400',
     symbolType: 'pallas',
     description: '34도나 기울어진 특이한 궤도를 공전하는 탄소질 광물이 풍부한 어두운 소행성입니다.',
+    category: '소행성대 대형 소행성',
+    discoveryDate: '1802년 3월 28일 (하인리히 올베르스 발견)',
+    factsDetail: '두 번째로 발견된 소행성으로, 금속 원소 팔라듐의 이름이 팔라스에서 왔습니다.',
   },
   {
     id: 'c_bennu',
@@ -203,6 +210,9 @@ export const CELESTIAL_TILES: TileThemeItem[] = [
     badgeBg: 'bg-teal-400',
     symbolType: 'bennu',
     description: '다이아몬드형 주사위 형태를 띤 근지구 소행성으로 오시리스-렉스가 토양을 채취했습니다.',
+    category: '근지구 소행성 (탄소질)',
+    discoveryDate: '1999년 9월 11일 (LINEAR 발견)',
+    factsDetail: '2023년 9월 오시리스-렉스가 약 121g의 표본을 지구로 가져왔고, 그 속에서 생명의 재료인 아미노산이 발견되었습니다.',
   },
 
   // --- Chapter 5: 목성과 갈릴레이 위성들 (목성, 이오, 유로파, 가니메데) ---
@@ -219,6 +229,9 @@ export const CELESTIAL_TILES: TileThemeItem[] = [
     badgeBg: 'bg-orange-400',
     symbolType: 'jupiter',
     description: '태양계 모든 행성을 합친 것보다 2.5배 무거운 가스 거인으로 대적점 폭풍이 붑니다.',
+    category: '태양계 최대 가스 행성',
+    discoveryDate: '고대부터 관측 (1610년 갈릴레이가 위성 발견)',
+    factsDetail: '대적점은 지구가 통째로 들어갈 만큼 큰 폭풍으로, 수백 년 동안 소용돌이쳐 온 것으로 알려져 있습니다.',
   },
   {
     id: 'c_io',
@@ -232,7 +245,10 @@ export const CELESTIAL_TILES: TileThemeItem[] = [
     textColor: 'text-yellow-950',
     badgeBg: 'bg-yellow-400',
     symbolType: 'io',
-    description: '400개 이상의 활화산에서 유황 마그마가 솟구치는 태양계에서 가장 화산활동이 활발한 위성입니다.',
+    description: '400개가 넘는 활화산이 있는, 태양계에서 화산 활동이 가장 활발한 천체입니다.',
+    category: '목성 제1 갈릴레이 위성 (화산 위성)',
+    discoveryDate: '1610년 1월 (갈릴레오 갈릴레이 발견)',
+    factsDetail: '목성과 이웃 위성들이 잡아당기는 힘이 속을 데워, 화산 분출물이 수백 km 높이까지 치솟습니다.',
   },
   {
     id: 'c_europa',
@@ -246,7 +262,10 @@ export const CELESTIAL_TILES: TileThemeItem[] = [
     textColor: 'text-sky-950',
     badgeBg: 'bg-sky-300',
     symbolType: 'europa',
-    description: '두꺼운 얼음 표면 아래에 지구 바다의 2배가 넘는 거대한 온수 바다가 숨겨져 있습니다.',
+    description: '두꺼운 얼음 표면 아래에 지구 바다의 2배가 넘는 물을 품은 거대한 바다가 숨겨져 있습니다.',
+    category: '목성 제2 갈릴레이 위성 (얼음 위성)',
+    discoveryDate: '1610년 1월 (갈릴레오 갈릴레이 발견)',
+    factsDetail: '2024년 10월 발사된 유로파 클리퍼 탐사선이 2030년 목성에 도착해 이 바다를 조사할 예정입니다.',
   },
   {
     id: 'c_ganymede',
@@ -261,6 +280,9 @@ export const CELESTIAL_TILES: TileThemeItem[] = [
     badgeBg: 'bg-slate-400',
     symbolType: 'ganymede',
     description: '수성보다 크며 자체 자기장을 가진 태양계에서 가장 거대한 위성입니다.',
+    category: '목성 제3 갈릴레이 위성 (태양계 최대 위성)',
+    discoveryDate: '1610년 1월 (갈릴레오 갈릴레이 발견)',
+    factsDetail: '지름 약 5,268km로 수성보다 크며, 위성 중 유일하게 스스로 자기장을 만들어 오로라가 생깁니다.',
   },
 
   // --- Chapter 6: 토성과 고리의 위성들 (토성, 타이탄, 엔셀라두스, 미마스) ---
@@ -313,7 +335,7 @@ export const CELESTIAL_TILES: TileThemeItem[] = [
     category: '토성 제2위성 (얼음 간헐천의 별)',
     discoveryDate: '1789년 8월 28일 (윌리엄 허셜 발견)',
     description: '남극 얼음 갈라진 틈에서 우주 공간으로 수증기와 유기물 간헐천을 뿜어냅니다.',
-    factsDetail: '태양빛의 99%를 반사하는 가장 하얀 천체이며, 지하 열수구 주변에 원시 생명체 존재 가능성이 높습니다.',
+    factsDetail: '태양빛의 99%를 반사하는 가장 하얀 천체이며, 지하 바다가 생명체가 살 수 있는 환경인지 과학자들이 주목하고 있습니다.',
   },
   {
     id: 'c_mimas',
@@ -382,7 +404,7 @@ export const CELESTIAL_TILES: TileThemeItem[] = [
     symbolType: 'triton',
     category: '해왕성 제1위성 (역행 위성)',
     discoveryDate: '1846년 10월 10일 (윌리엄 라셀 발견)',
-    description: '영하 235도로 태양계에서 가장 차가우며 궤도를 거꾸로 도는 역행 위성입니다.',
+    description: '영하 235도로 태양계에서 가장 차가운 천체 중 하나이며, 해왕성을 거꾸로 도는 역행 위성입니다.',
     factsDetail: '카이퍼 벨트에서 포획된 천체로, 질소 얼음 간헐천이 8km 상공까지 얼음 연기를 뿜어냅니다.',
   },
   {
@@ -400,7 +422,7 @@ export const CELESTIAL_TILES: TileThemeItem[] = [
     category: '천왕성 제5위성 (프랑켄슈타인 위성)',
     discoveryDate: '1948년 2월 16일 (제라드 카이퍼 발견)',
     description: '태양계 최고 높이인 20km 수직 절벽 베로나 루페스를 지닌 기괴한 위성입니다.',
-    factsDetail: '과거 대충돌로 산산조각 났다가 중력으로 무작위 재조립되어 콜라주 같은 지형을 가졌습니다.',
+    factsDetail: '서로 다른 지형이 조각보처럼 붙어 있어, 과거 큰 충돌로 부서졌다 다시 뭉쳤다는 가설도 있습니다.',
   },
 
   // --- Chapter 8: 카이퍼 벨트와 왜소행성 (명왕성, 카론, 마케마케, 하우메아) ---
@@ -419,7 +441,7 @@ export const CELESTIAL_TILES: TileThemeItem[] = [
     category: '카이퍼 벨트 왜소행성',
     discoveryDate: '1930년 2월 18일 (클라이드 톰보 발견)',
     description: '표면에 하트 모양의 거대한 스푸트니크 질소 얼음 평원을 품고 있습니다.',
-    factsDetail: '지름 2,377km의 작은 천체이지만 대기를 가지며, 하트 빙하 지하에 거대한 바다가 존재합니다.',
+    factsDetail: '지름 2,377km의 작은 천체이지만 대기를 가지며, 하트 빙하 아래에 바다가 있을 것으로 추정됩니다.',
   },
   {
     id: 'c_charon',
@@ -435,7 +457,7 @@ export const CELESTIAL_TILES: TileThemeItem[] = [
     symbolType: 'charon',
     category: '명왕성 쌍둥이 위성 (이중 행성계)',
     discoveryDate: '1978년 6월 22일 (제임스 크리스티 발견)',
-    description: '명왕성의 쌍둥이 위성으로 북극에 붉은 톨린 물질인 모르도르가 있습니다.',
+    description: '명왕성의 가장 큰 위성으로 북극에 붉은 톨린 물질인 모르도르가 있습니다.',
     factsDetail: '명왕성 질량의 약 12%에 달해 둘 사이의 무게중심이 명왕성 바깥 우주 공간에 위치합니다.',
   },
   {
@@ -470,7 +492,7 @@ export const CELESTIAL_TILES: TileThemeItem[] = [
     category: '초고속 자전 왜소행성 (고리 보유)',
     discoveryDate: '2004년 12월 28일 (마이클 브라운 연구팀)',
     description: '단 4시간 만에 자전하는 초고속 회전으로 인해 럭비공처럼 길쭉한 왜소행성입니다.',
-    factsDetail: '태양계 왜소행성 중 유일하게 고리를 가졌으며, 하와이 출산의 여신 하우메아의 이름을 땄습니다.',
+    factsDetail: '왜소행성 가운데 처음으로 고리가 발견되었으며, 하와이 출산의 여신 하우메아의 이름을 땄습니다.',
   },
 
   // --- Chapter 9: 신비한 혜성과 성간 천체 (핼리, 오무아무아, 보리소프, 67P) ---
@@ -486,7 +508,10 @@ export const CELESTIAL_TILES: TileThemeItem[] = [
     textColor: 'text-sky-950',
     badgeBg: 'bg-sky-400',
     symbolType: 'halley',
-    description: '76년마다 태양을 방문하며 긴 푸른 이온 가스 꼬리를 남기는 장주기 혜성입니다.',
+    description: '약 76년마다 돌아오며 긴 푸른 이온 꼬리를 남기는, 가장 유명한 주기 혜성입니다.',
+    category: '주기 혜성 (1P/Halley)',
+    discoveryDate: '1705년 에드먼드 핼리가 돌아올 때를 예측',
+    factsDetail: '마지막으로 1986년에 찾아왔고 다음에는 2061년에 돌아오며, 동아시아 옛 기록에도 여러 번 등장합니다.',
   },
   {
     id: 'c_oumuamua',
@@ -501,6 +526,9 @@ export const CELESTIAL_TILES: TileThemeItem[] = [
     badgeBg: 'bg-red-600',
     symbolType: 'oumuamua',
     description: '태양계 밖 외계 항성계에서 찾아온 최초의 시가 모양 성간 천체입니다.',
+    category: '최초로 발견된 성간 천체 (1I)',
+    discoveryDate: '2017년 10월 19일 (판스타스 망원경 발견)',
+    factsDetail: '하와이어로 ‘먼 곳에서 온 첫 번째 메신저’라는 뜻이며, 태양계를 빠르게 지나 다시 떠났습니다.',
   },
   {
     id: 'c_borisov',
@@ -514,7 +542,10 @@ export const CELESTIAL_TILES: TileThemeItem[] = [
     textColor: 'text-emerald-950',
     badgeBg: 'bg-emerald-400',
     symbolType: 'borisov',
-    description: '외계 성간 공간에서 진입한 두 번째 성간 천체로 일산화탄소 꼬리를 뿜었습니다.',
+    description: '태양계 밖에서 찾아온 두 번째 성간 천체이자 첫 성간 혜성으로, 일산화탄소가 풍부했습니다.',
+    category: '최초의 성간 혜성 (2I)',
+    discoveryDate: '2019년 8월 30일 (겐나디 보리소프 발견)',
+    factsDetail: '아마추어 천문가 보리소프가 직접 만든 망원경으로 찾아냈습니다.',
   },
   {
     id: 'c_comet67p',
@@ -529,6 +560,9 @@ export const CELESTIAL_TILES: TileThemeItem[] = [
     badgeBg: 'bg-stone-500',
     symbolType: 'comet67p',
     description: '로제타 탐사선이 착륙한 오리 인형 모양의 목탄처럼 검은 얼음 혜성입니다.',
+    category: '주기 혜성 (추류모프-게라시멘코)',
+    discoveryDate: '1969년 (추류모프·게라시멘코 발견)',
+    factsDetail: '2014년 11월 로제타호의 착륙선 필레가 인류 최초로 혜성 표면에 내려앉았습니다.',
   },
 
   // --- Chapter 10: 성운과 별들의 요람 (오리온, 게성운, 고리성운, 나선성운) ---
@@ -545,6 +579,9 @@ export const CELESTIAL_TILES: TileThemeItem[] = [
     badgeBg: 'bg-rose-400',
     symbolType: 'orion',
     description: '수백 개의 아기 별들이 태어나고 있는 밤하늘에서 가장 찬란한 발광 성운입니다.',
+    category: '발광 성운 (M42)',
+    discoveryDate: '1610년 망원경으로 처음 기록',
+    factsDetail: '약 1,300광년 떨어진 가장 가까운 대형 별 탄생 지역으로, 오리온자리 칼 부분에서 맨눈으로도 보입니다.',
   },
   {
     id: 'c_crab',
@@ -559,6 +596,9 @@ export const CELESTIAL_TILES: TileThemeItem[] = [
     badgeBg: 'bg-orange-400',
     symbolType: 'crab',
     description: '1054년 초신성 폭발이 관측된 후 남겨진 거미줄 같은 가스 필라멘트 성운입니다.',
+    category: '초신성 잔해 (M1)',
+    discoveryDate: '1054년 초신성 폭발 기록',
+    factsDetail: '한가운데에는 1초에 약 30번 회전하는 펄서가 있어 성운을 밝게 빛나게 합니다.',
   },
   {
     id: 'c_ring',
@@ -573,6 +613,9 @@ export const CELESTIAL_TILES: TileThemeItem[] = [
     badgeBg: 'bg-cyan-400',
     symbolType: 'ring',
     description: '수명을 다한 별이 외피층을 방출하며 도넛 모양으로 팽창한 행성상 성운입니다.',
+    category: '행성상 성운 (M57)',
+    discoveryDate: '1779년 (앙투안 다르키에 발견)',
+    factsDetail: '우리 태양도 약 50억 년 뒤 수명을 다하면 이처럼 가스 껍질을 내보낼 것으로 예상됩니다.',
   },
   {
     id: 'c_helix',
@@ -586,7 +629,10 @@ export const CELESTIAL_TILES: TileThemeItem[] = [
     textColor: 'text-indigo-950',
     badgeBg: 'bg-indigo-400',
     symbolType: 'helix',
-    description: '거대한 신의 눈이라 불리는 우리에게서 가장 가까운 행성상 성운입니다.',
+    description: '‘신의 눈’이라는 별명을 가진, 지구에서 가장 가까운 행성상 성운 중 하나입니다.',
+    category: '행성상 성운 (NGC 7293)',
+    discoveryDate: '1824년 이전 (카를 하르딩 발견)',
+    factsDetail: '약 650광년 떨어져 있으며, 하늘에서 보름달에 가까운 크기로 넓게 보입니다.',
   },
 
   // --- Chapter 11: 항성의 일생과 극한의 별 (태양, 시리우스, 베텔게우스, 펄서) ---
@@ -603,6 +649,9 @@ export const CELESTIAL_TILES: TileThemeItem[] = [
     badgeBg: 'bg-amber-400',
     symbolType: 'sun',
     description: '초당 400만 톤의 물질을 빛과 에너지로 변환하는 우리 태양계의 유일한 항성입니다.',
+    category: '태양계의 중심 별 (G형 주계열성)',
+    discoveryDate: '약 46억 년 전 탄생',
+    factsDetail: '햇빛이 지구까지 오는 데 약 8분 20초가 걸리며, 태양계 전체 질량의 99.8%를 차지합니다.',
   },
   {
     id: 'c_sirius',
@@ -617,6 +666,9 @@ export const CELESTIAL_TILES: TileThemeItem[] = [
     badgeBg: 'bg-blue-300',
     symbolType: 'sirius',
     description: '밤하늘에서 가장 눈부시게 밝은 큰개자리의 백색 A형 주계열성입니다.',
+    category: '큰개자리 알파별 (쌍성)',
+    discoveryDate: '고대부터 관측 (고대 이집트 달력의 기준)',
+    factsDetail: '약 8.6광년 떨어져 있으며, 곁에는 작고 뜨거운 백색왜성 시리우스 B가 함께 돕니다.',
   },
   {
     id: 'c_betelgeuse',
@@ -630,7 +682,10 @@ export const CELESTIAL_TILES: TileThemeItem[] = [
     textColor: 'text-red-950',
     badgeBg: 'bg-red-400',
     symbolType: 'betelgeuse',
-    description: '태양의 700배 크기이며 언제든 초신성 폭발을 일으킬 수 있는 적색초거성입니다.',
+    description: '태양보다 수백 배 큰 적색 초거성으로, 언젠가 초신성으로 폭발할 것으로 예상됩니다.',
+    category: '오리온자리 적색 초거성',
+    discoveryDate: '고대부터 관측',
+    factsDetail: '2019~2020년 갑자기 어두워지는 ‘대감광’으로 화제가 되었는데, 별이 뿜어낸 먼지 구름 때문으로 밝혀졌습니다.',
   },
   {
     id: 'c_pulsar',
@@ -644,7 +699,10 @@ export const CELESTIAL_TILES: TileThemeItem[] = [
     textColor: 'text-violet-950',
     badgeBg: 'bg-violet-400',
     symbolType: 'pulsar',
-    description: '초당 수백 회 회전하며 등대처럼 강력한 전파와 감마선 빔을 방출하는 중성자별입니다.',
+    description: '1초에 수 번에서 수백 번 회전하며 등대처럼 전파 빔을 내뿜는 중성자별입니다.',
+    category: '빠르게 회전하는 중성자별',
+    discoveryDate: '1967년 (조슬린 벨 버넬 발견)',
+    factsDetail: '각설탕 한 개만 한 양이 수억 톤에 이를 만큼 밀도가 엄청나게 높은 별입니다.',
   },
 
   // --- Chapter 12: 은하와 시공간의 블랙홀 (안드로메다, 블랙홀, 솜브레로, 퀘이사) ---
@@ -660,7 +718,10 @@ export const CELESTIAL_TILES: TileThemeItem[] = [
     textColor: 'text-indigo-950',
     badgeBg: 'bg-indigo-400',
     symbolType: 'andromeda',
-    description: '1조 개의 별을 품은 거대한 나선 은하로 45억 년 후 우리 은하와 합체됩니다.',
+    description: '약 1조 개의 별을 품은 거대한 나선은하로, 수십억 년 뒤 우리은하와 합쳐질 수도 있습니다.',
+    category: '나선은하 (M31)',
+    discoveryDate: '964년 (페르시아 천문학자 알수피 기록)',
+    factsDetail: '약 250만 광년 떨어져 있어, 지금 보는 빛은 인류의 먼 조상이 나타날 무렵 출발한 빛입니다.',
   },
   {
     id: 'c_blackhole',
@@ -675,6 +736,9 @@ export const CELESTIAL_TILES: TileThemeItem[] = [
     badgeBg: 'bg-orange-400',
     symbolType: 'blackhole',
     description: '빛조차 탈출할 수 없는 강력한 중력으로 시공간을 휘어지게 만드는 극한 천체입니다.',
+    category: '빛도 빠져나오지 못하는 천체',
+    discoveryDate: '1971년 백조자리 X-1 확인 (첫 블랙홀 후보)',
+    factsDetail: '블랙홀 가까이에서는 시간이 느리게 흐르는데, 이를 ‘중력에 의한 시간 지연’이라고 합니다.',
   },
   {
     id: 'c_sombrero',
@@ -689,6 +753,9 @@ export const CELESTIAL_TILES: TileThemeItem[] = [
     badgeBg: 'bg-stone-300',
     symbolType: 'sombrero',
     description: '챙이 넓은 멕시코 모자처럼 중심 팽대부 주위로 짙은 먼지 띠가 둘러싸인 은하입니다.',
+    category: '나선은하 (M104)',
+    discoveryDate: '1781년 (피에르 메샹 발견)',
+    factsDetail: '약 3,000만 광년 떨어져 있으며, 중심에 태양 질량의 약 10억 배인 블랙홀이 있습니다.',
   },
   {
     id: 'c_quasar',
@@ -703,15 +770,20 @@ export const CELESTIAL_TILES: TileThemeItem[] = [
     badgeBg: 'bg-rose-400',
     symbolType: 'quasar',
     description: '은하 전체보다 수백 배 밝은 빛을 내며 광속에 가까운 제트를 뿜는 활동 은하핵입니다.',
+    category: '활동 은하핵',
+    discoveryDate: '1963년 (마르턴 슈미트가 정체 규명)',
+    factsDetail: '가장 가까운 퀘이사 중 하나인 3C 273도 약 24억 광년이나 떨어져 있습니다.',
   },
 ];
+
+export const CELESTIAL_TILES: TileThemeItem[] = [...BASE_CELESTIAL_TILES, ...EXTRA_CELESTIAL_TILES];
 
 export const GAME_THEMES: Record<string, GameTheme> = {
   cosmic: {
     id: 'cosmic',
     name: 'Cosmic Odyssey',
     nameKo: '은하수 우주 오디세이',
-    subtitle: '수성부터 블랙홀까지 44종 천체 과학 탐사',
+    subtitle: '수성부터 블랙홀까지 100종 천체 과학 탐사',
     accentColor: '#38bdf8',
     backgroundClass: 'bg-gradient-to-b from-[#090a1e] via-[#0d1333] to-[#150e28]',
     dockBg: 'bg-slate-900/80 border-cyan-500/30 shadow-[0_0_20px_rgba(56,189,248,0.15)]',

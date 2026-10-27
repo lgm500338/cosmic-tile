@@ -5,6 +5,7 @@ import { CELESTIAL_ENGLISH } from '../data/celestialEnglish';
 import { soundManager } from '../utils/audio';
 import { AlienFace, AlienKind, ALIEN_TILE_STYLE } from './AlienTile';
 import { uniquifySvgIds, useSvgSuffix } from '../utils/uniqueSvgIds';
+import { EXTRA_VIEWBOX, renderExtraArt } from './celestialArtExtra';
 
 interface JellyTileProps {
   item: TileThemeItem;
@@ -69,7 +70,7 @@ const TIGHT_VIEWBOX: Record<string, string> = {
  "sombrero": "2.5 2.5 39.0 39.0",
  "quasar": "2.5 2.5 39.0 39.0"
 };
-const vb = (symbolType: string) => TIGHT_VIEWBOX[symbolType] || '0 0 44 44';
+const vb = (symbolType: string) => TIGHT_VIEWBOX[symbolType] || EXTRA_VIEWBOX[symbolType] || '0 0 44 44';
 
 // 비슷해 보이던 천체들의 색을 확실히 다르게 (회청색 공 6개, 빨간 공 3개, 노란 공 3개, 주황 공 3개, 혜성 2개)
 const SYMBOL_TINT: Record<string, string> = {
@@ -88,9 +89,11 @@ const SYMBOL_TINT: Record<string, string> = {
   miranda: 'grayscale(0.9) brightness(1.15)', // 회백색
   borisov: 'hue-rotate(125deg) saturate(1.3)', // 보라·분홍 혜성
   helix: 'hue-rotate(70deg) saturate(1.2)', // 노랑·보라 고리
+  sedna: 'brightness(0.7) saturate(0.85)', // 어두운 적갈색 (안타레스·프록시마와 구분)
+  antares: 'hue-rotate(14deg)', // 주황빛 붉은색
 };
 
-// Custom rich vector graphic renderer for all 44 distinct celestial bodies
+// 천체 100종의 타일 그림 (기존 44종은 아래 switch, 새 56종은 celestialArtExtra.tsx)
 export const renderTileGraphic = (symbolType: string, _isCovered: boolean = false, emoji: string = '✨', size: 'sm' | 'md' | 'lg' = 'md') => {
   // Retain identical vibrant colors whether in front or behind (user request 9: 타일 뒤에 있을 때 색이 달라지지 않도록 동일 유지)
   // 색을 진하고 또렷하게 (채도·명암 강화) + 타일에서 떠 보이는 그림자
@@ -884,12 +887,22 @@ export const renderTileGraphic = (symbolType: string, _isCovered: boolean = fals
         </svg>
       );
 
-    default:
+    default: {
+      // 새로 추가한 56종: 같은 크기·같은 색 보정·같은 그림자로 그려 기존 타일과 느낌을 맞춘다
+      const extra = renderExtraArt(symbolType);
+      if (extra) {
+        return (
+          <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: (SYMBOL_TINT[symbolType] ? SYMBOL_TINT[symbolType] + ' ' : '') + filterStyle, overflow: 'visible' }}>
+            {extra}
+          </svg>
+        );
+      }
       return (
         <span className="text-3xl leading-none filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.25)] select-none">
           {emoji}
         </span>
       );
+    }
   }
 };
 
