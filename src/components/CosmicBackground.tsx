@@ -37,6 +37,21 @@ function loadManifest(): Promise<BackgroundManifestEntry[]> {
   return manifestPromise;
 }
 
+/**
+ * 레벨 → 사진 번호 (1부터)
+ * 1~100레벨: 레벨 번호 그대로. 101레벨부터: 100장을 바퀴마다 다른 간격으로 건너뛰며 다시 쓴다.
+ * 간격(37·59·73·…)이 100과 서로소라서 한 바퀴 안에 100장이 한 번씩 다 나오고, 바로 앞 레벨과 같은 사진은 나오지 않는다.
+ */
+const PHOTO_STEPS = [37, 59, 73, 41, 83, 29, 67, 91];
+export function photoIndexForLevel(level: number, total: number): number {
+  const n = Math.max(1, total);
+  const k = (level - 1) % n;
+  const lap = Math.floor((level - 1) / n);
+  if (lap === 0) return k + 1;
+  const step = PHOTO_STEPS[(lap - 1) % PHOTO_STEPS.length];
+  return ((k * step + lap * 11) % n) + 1;
+}
+
 // 팔레트 [주색, 보조색, 밝은 빛]
 const PALETTES: Array<[string, string, string]> = [
   ['#c2410c', '#be185d', '#fcd9a8'], // 주황·장미
@@ -395,14 +410,22 @@ export const CosmicBackground: React.FC<CosmicBackgroundProps> = ({ levelNumber 
     const reduceMotion = false;
     const motionScale = prefersReduced ? 0.6 : 1;
 
-    // 1~100레벨: 실제 우주 사진 (있으면). 사진이 뜨면 코드 배경에서 부드럽게 바뀐다
+    // 실제 우주 사진 (있으면). 1~100레벨은 사진 번호 = 레벨,
+    // 101레벨부터는 같은 100장을 다른 순서로 다시 쓰고, 좌우 뒤집기·움직임 방향을 바꿔 새 장면처럼 보이게 한다.
+    // 사진이 뜨면 코드 배경에서 부드럽게 바뀐다
     let photo: HTMLImageElement | null = null;
     let photoAlpha = 0;
+    const lap = Math.floor((level - 1) / 100); // 몇 바퀴째인지 (0 = 1~100레벨)
+    const photoFlip = lap % 2 === 1; // 홀수 바퀴는 좌우 반전
+    const pr = seeded(level * 7919 + 17);
+    const phase = lap === 0 ? 0 : pr() * 200; // 움직임 시작 위치
+    const dirX = lap === 0 || pr() < 0.5 ? 1 : -1; // 흐르는 방향
+    const dirY = lap === 0 || pr() < 0.5 ? 1 : -1;
     let cancelled = false;
     onPhotoInfoRef.current?.(null);
     loadManifest().then(list => {
       if (cancelled) return;
-      const entry = list.find(e => e.index === level);
+      const entry = list.find(e => e.index === photoIndexForLevel(level, list.length));
       if (!entry) return;
       const img = new Image();
       img.decoding = 'async';
@@ -700,14 +723,23 @@ export const CosmicBackground: React.FC<CosmicBackgroundProps> = ({ levelNumber 
       if (photo && photoAlpha > 0) {
         const iw = photo.naturalWidth, ih = photo.naturalHeight;
         // 어지럽지 않도록 아주 천천히 (약 2분 주기), 확대 폭도 작게
-        const zoom = 1.06 + 0.07 * (0.5 + 0.5 * Math.sin(t * 0.045));
+        const tp = t + phase;
+        const zoom = (lap === 0 ? 1.06 : 1.12) + 0.07 * (0.5 + 0.5 * Math.sin(tp * 0.045));
         const s0 = Math.max(W / iw, H / ih) * zoom;
         const dw = iw * s0, dh = ih * s0;
         const mxp = (dw - W) / 2, myp = (dh - H) / 2;
-        const px = Math.sin(t * 0.032) * mxp * 0.6;
-        const py = Math.cos(t * 0.026) * myp * 0.6;
+        const px = dirX * Math.sin(tp * 0.032) * mxp * 0.6;
+        const py = dirY * Math.cos(tp * 0.026) * myp * 0.6;
         ctx.globalAlpha = photoAlpha;
-        ctx.drawImage(photo, (W - dw) / 2 + px, (H - dh) / 2 + py, dw, dh);
+        if (photoFlip) {
+          ctx.save();
+          ctx.translate(W, 0);
+          ctx.scale(-1, 1);
+          ctx.drawImage(photo, (W - dw) / 2 + px, (H - dh) / 2 + py, dw, dh);
+          ctx.restore();
+        } else {
+          ctx.drawImage(photo, (W - dw) / 2 + px, (H - dh) / 2 + py, dw, dh);
+        }
         // 타일이 주인공이 되도록 사진을 살짝 어둡게
         ctx.fillStyle = 'rgba(3,4,12,0.32)';
         ctx.fillRect(0, 0, W, H);

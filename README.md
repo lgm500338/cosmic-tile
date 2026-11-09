@@ -1,6 +1,6 @@
 # 우주 타일 매치 (Jelly Match: Cosmic Odyssey)
 
-실제 천체 47종으로 하는 3-타일 매치 퍼즐 게임. React + Vite + TypeScript + Tailwind CSS.
+실제 천체 150종으로 하는 3-타일 매치 퍼즐 게임. React + Vite + TypeScript + Tailwind CSS.
 
 ## 배포 (Vercel)
 - Framework Preset: **Vite** / Build Command: `npm run build` / Output Directory: `dist`
@@ -10,6 +10,10 @@
 
 ## 배경 사진 확인
 배포 주소 뒤에 `?bg-gallery` 를 붙이면 100장과 출처를 한눈에 볼 수 있습니다.
+101레벨부터는 같은 100장을 다른 순서·좌우 반전·다른 움직임으로 다시 씁니다.
+
+## 천체 타일 확인
+배포 주소 뒤에 `?tile-gallery` 를 붙이면 천체 타일 150종을 한눈에 볼 수 있습니다.
 사람이 알아볼 수 있게 찍힌 사진은 상업적으로 쓸 수 없으니, 있으면 `src/data/backgrounds.ts`에서 빼 주세요.
 
 © 2026 아이디어믹스랩. All rights reserved.

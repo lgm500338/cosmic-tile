@@ -8,7 +8,7 @@ import type { CelestialEnglishInfo } from './celestialEnglish';
 
 type Palette = Pick<TileThemeItem, 'primaryColor' | 'glowColor' | 'textColor' | 'badgeBg'>;
 
-const PALETTE: Record<string, Palette> = {
+export const PALETTE: Record<string, Palette> = {
   stone: { primaryColor: 'from-stone-300 via-stone-500 to-stone-700', glowColor: 'rgba(168, 162, 158, 0.6)', textColor: 'text-stone-950', badgeBg: 'bg-stone-400' },
   ice: { primaryColor: 'from-slate-100 via-sky-200 to-sky-400', glowColor: 'rgba(186, 230, 253, 0.6)', textColor: 'text-sky-950', badgeBg: 'bg-sky-300' },
   red: { primaryColor: 'from-rose-300 via-red-500 to-red-800', glowColor: 'rgba(239, 68, 68, 0.6)', textColor: 'text-red-950', badgeBg: 'bg-red-400' },
@@ -23,7 +23,7 @@ const PALETTE: Record<string, Palette> = {
 };
 
 // [id, 영문 이름, 한글 이름, 짧은 이름(한), 짧은 이름(영), 이모지, 색, 분류, 발견·기록, 설명, 상식]
-type Row = [string, string, string, string, string, string, keyof typeof PALETTE, string, string, string, string];
+export type Row = [string, string, string, string, string, string, keyof typeof PALETTE, string, string, string, string];
 
 const ROWS: Row[] = [
   // --- 목성의 위성 ---

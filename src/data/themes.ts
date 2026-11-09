@@ -1,5 +1,6 @@
 import { GameTheme, TileThemeItem } from '../types/game';
 import { EXTRA_CELESTIAL_TILES } from './celestialExtra';
+import { MORE_CELESTIAL_TILES } from './celestialMore';
 
 // 천체 100종: 기존 44종 + 새로 추가한 56종(celestialExtra.ts)
 const BASE_CELESTIAL_TILES: TileThemeItem[] = [
@@ -776,7 +777,7 @@ const BASE_CELESTIAL_TILES: TileThemeItem[] = [
   },
 ];
 
-export const CELESTIAL_TILES: TileThemeItem[] = [...BASE_CELESTIAL_TILES, ...EXTRA_CELESTIAL_TILES];
+export const CELESTIAL_TILES: TileThemeItem[] = [...BASE_CELESTIAL_TILES, ...EXTRA_CELESTIAL_TILES, ...MORE_CELESTIAL_TILES];
 
 export const GAME_THEMES: Record<string, GameTheme> = {
   cosmic: {

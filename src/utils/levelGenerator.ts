@@ -972,12 +972,267 @@ export const CHAPTER_PRESETS: ChapterPreset[] = [
     briefing: {
       title: '한국의 우주 도전',
       titleEn: 'Korea’s Space Journey',
-      description: '우리 기술로 만든 누리호가 위성을 궤도에 올렸고, 한국 최초의 달 탐사선 다누리는 달 궤도에서 달을 관측해 왔습니다. 다음 꿈은 무엇일까요?',
-      descriptionEn: 'Korea’s own Nuri rocket put satellites into orbit, and Danuri, Korea’s first lunar probe, has been observing the Moon from orbit. What will be next?',
+      description: '1992년 우리별 1호로 첫 인공위성을 가졌고, 우리 기술로 만든 누리호가 위성을 궤도에 올렸으며, 한국 최초의 달 탐사선 다누리는 달 궤도에서 달을 관측해 왔습니다. 다음 꿈은 무엇일까요?',
+      descriptionEn: 'Korea got its first satellite, KITSAT-1, in 1992; its own Nuri rocket put satellites into orbit; and Danuri, Korea’s first lunar probe, has been observing the Moon from orbit. What will be next?',
       tip: '',
-      featuredTiles: ['c_nuri', 'c_danuri', 'c_moon'],
+      featuredTiles: ['c_kitsat1', 'c_nuri', 'c_danuri'],
     },
-    tileIds: ['c_nuri', 'c_danuri', 'c_moon'],
+    tileIds: ['c_kitsat1', 'c_nuri', 'c_danuri', 'c_moon'],
+  },
+  // 해왕성 너머의 붉은 얼음 세계
+  {
+    chapterTitle: '해왕성 너머의 붉은 얼음 세계',
+    chapterTitleEn: 'Red Ice Worlds Beyond Neptune',
+    defaultFailureRate: 97,
+    briefing: {
+      title: '해왕성 너머의 붉은 얼음 세계',
+      titleEn: 'Red Ice Worlds Beyond Neptune',
+      description: '해왕성 바깥 차가운 카이퍼 벨트에는 고리를 두른 콰오아, 명왕성의 짝꿍 같은 오르쿠스, 새빨간 공공처럼 아직 잘 알려지지 않은 얼음 세계들이 떠 있습니다.',
+      descriptionEn: 'In the cold Kuiper Belt beyond Neptune drift little-known ice worlds: ringed Quaoar, Orcus, Pluto’s opposite twin, and the deep red Gonggong.',
+      tip: '',
+      featuredTiles: ['c_quaoar', 'c_orcus', 'c_gonggong'],
+    },
+    tileIds: ['c_quaoar', 'c_orcus', 'c_gonggong'],
+  },
+  // 거대 행성의 비밀
+  {
+    chapterTitle: '거대 행성의 비밀',
+    chapterTitleEn: 'Secrets of the Giant Planets',
+    defaultFailureRate: 97,
+    briefing: {
+      title: '거대 행성의 비밀',
+      titleEn: 'Secrets of the Giant Planets',
+      description: '목성에는 지구보다 큰 폭풍 대적점이 수백 년째 소용돌이치고, 토성의 고리 틈에서는 만두처럼 생긴 작은 위성 판이 길을 청소하고 있습니다.',
+      descriptionEn: 'On Jupiter a storm larger than Earth has swirled for centuries, while in a gap in Saturn’s rings the dumpling-shaped moon Pan sweeps its path clear.',
+      tip: '',
+      featuredTiles: ['c_redspot', 'c_pan', 'c_jupiter', 'c_saturn'],
+    },
+    tileIds: ['c_redspot', 'c_pan', 'c_jupiter', 'c_saturn'],
+  },
+  // 탐사선이 찾아간 소행성과 혜성
+  {
+    chapterTitle: '탐사선이 찾아간 소행성과 혜성',
+    chapterTitleEn: 'Asteroids & Comets Up Close',
+    defaultFailureRate: 97,
+    briefing: {
+      title: '탐사선이 찾아간 소행성과 혜성',
+      titleEn: 'Asteroids & Comets Up Close',
+      description: '로제타호는 10년을 날아 혜성에 착륙선을 내렸고, 하틀리 2 혜성은 땅콩 모양 핵에서 얼음을 뿜었습니다. 금속 소행성 프시케에는 지금 탐사선이 날아가고 있습니다.',
+      descriptionEn: 'Rosetta flew ten years to drop a lander on a comet, Hartley 2 sprayed ice from its peanut-shaped core, and a probe is now on its way to the metal asteroid Psyche.',
+      tip: '',
+      featuredTiles: ['c_rosetta', 'c_hartley2', 'c_psyche', 'c_comet67p'],
+    },
+    tileIds: ['c_rosetta', 'c_hartley2', 'c_psyche', 'c_comet67p'],
+  },
+  // 봄 밤의 왕과 보석
+  {
+    chapterTitle: '봄 밤의 왕과 보석',
+    chapterTitleEn: 'Kings & Jewels of the Spring Sky',
+    defaultFailureRate: 97,
+    briefing: {
+      title: '봄 밤의 왕과 보석',
+      titleEn: 'Kings & Jewels of the Spring Sky',
+      description: '봄 밤에는 사자자리의 심장 레굴루스와 처녀자리의 푸른 보석 스피카가 빛납니다. 주황빛 아르크투루스와 함께 봄의 별들을 찾아보세요.',
+      descriptionEn: 'Spring nights bring Regulus, the heart of the Lion, and Spica, Virgo’s blue jewel. Find them together with orange Arcturus.',
+      tip: '',
+      featuredTiles: ['c_regulus', 'c_spica', 'c_arcturus'],
+    },
+    tileIds: ['c_regulus', 'c_spica', 'c_arcturus'],
+  },
+  // 겨울 밤의 대삼각형
+  {
+    chapterTitle: '겨울 밤의 대삼각형',
+    chapterTitleEn: 'The Winter Triangle',
+    defaultFailureRate: 97,
+    briefing: {
+      title: '겨울 밤의 대삼각형',
+      titleEn: 'The Winter Triangle',
+      description: '겨울 밤하늘에서는 시리우스·베텔게우스·프로키온이 커다란 삼각형을 그립니다. 머리 위에서는 노란 별 카펠라가 반짝입니다.',
+      descriptionEn: 'In winter Sirius, Betelgeuse and Procyon draw a great triangle in the sky, while yellow Capella sparkles overhead.',
+      tip: '',
+      featuredTiles: ['c_procyon', 'c_capella', 'c_sirius', 'c_betelgeuse'],
+    },
+    tileIds: ['c_procyon', 'c_capella', 'c_sirius', 'c_betelgeuse'],
+  },
+  // 깜빡이는 가을 별
+  {
+    chapterTitle: '깜빡이는 가을 별',
+    chapterTitleEn: 'Winking Stars of Autumn',
+    defaultFailureRate: 97,
+    briefing: {
+      title: '깜빡이는 가을 별',
+      titleEn: 'Winking Stars of Autumn',
+      description: '가을 하늘에는 외로이 빛나는 포말하우트, 2.87일마다 어두워지는 알골, 1년 가까운 주기로 나타났다 사라지는 미라처럼 밝기가 달라지는 별들이 있습니다.',
+      descriptionEn: 'Autumn skies hold lonely Fomalhaut, Algol which dims every 2.87 days, and Mira which appears and vanishes over nearly a year.',
+      tip: '',
+      featuredTiles: ['c_fomalhaut', 'c_algol', 'c_mira'],
+    },
+    tileIds: ['c_fomalhaut', 'c_algol', 'c_mira'],
+  },
+  // 다른 별의 행성들
+  {
+    chapterTitle: '다른 별의 행성들',
+    chapterTitleEn: 'Worlds Around Other Stars',
+    defaultFailureRate: 97,
+    briefing: {
+      title: '다른 별의 행성들',
+      titleEn: 'Worlds Around Other Stars',
+      description: '1995년 처음 발견된 태양 닮은 별의 행성 이후, 지금까지 6,000개가 넘는 외계행성이 확인되었습니다. 가장 가까운 프록시마 b부터 파란 행성까지 만나 보세요.',
+      descriptionEn: 'Since the first planet around a Sun-like star was found in 1995, more than 6,000 exoplanets have been confirmed. Meet them, from nearby Proxima b to a deep blue world.',
+      tip: '',
+      featuredTiles: ['c_51pegb', 'c_proximab', 'c_trappist1', 'c_hd189733b'],
+    },
+    tileIds: ['c_51pegb', 'c_proximab', 'c_trappist1', 'c_hd189733b'],
+  },
+  // 별이 태어나는 꽃밭
+  {
+    chapterTitle: '별이 태어나는 꽃밭',
+    chapterTitleEn: 'Flower Beds of Newborn Stars',
+    defaultFailureRate: 97,
+    briefing: {
+      title: '별이 태어나는 꽃밭',
+      titleEn: 'Flower Beds of Newborn Stars',
+      description: '가스와 먼지 구름 속에서 새 별이 태어나면, 그 빛과 바람이 구름을 깎아 장미, 대륙, 세 갈래 꽃, 비눗방울 같은 모양을 만듭니다.',
+      descriptionEn: 'When new stars are born inside clouds of gas and dust, their light and winds carve the clouds into roses, continents, three-petalled flowers and bubbles.',
+      tip: '',
+      featuredTiles: ['c_rosette', 'c_northamerica', 'c_trifid', 'c_bubble'],
+    },
+    tileIds: ['c_rosette', 'c_northamerica', 'c_trifid', 'c_bubble'],
+  },
+  // 별이 남긴 마지막 숨결
+  {
+    chapterTitle: '별이 남긴 마지막 숨결',
+    chapterTitleEn: 'Last Breaths of Stars',
+    defaultFailureRate: 97,
+    briefing: {
+      title: '별이 남긴 마지막 숨결',
+      titleEn: 'Last Breaths of Stars',
+      description: '태양 같은 별은 마지막에 바깥 가스를 부드럽게 내보내며, 그 가스가 나비 날개, 고리, 올빼미 얼굴 같은 "행성상 성운"이 됩니다.',
+      descriptionEn: 'Sun-like stars gently puff off their outer gas at the end of their lives, forming “planetary nebulae” shaped like butterfly wings, rings and owl faces.',
+      tip: '',
+      featuredTiles: ['c_butterfly', 'c_southernring', 'c_owl', 'c_helix'],
+    },
+    tileIds: ['c_butterfly', 'c_southernring', 'c_owl', 'c_helix'],
+  },
+  // 거대한 별의 대폭발
+  {
+    chapterTitle: '거대한 별의 대폭발',
+    chapterTitleEn: 'Giant Stars That Explode',
+    defaultFailureRate: 97,
+    briefing: {
+      title: '거대한 별의 대폭발',
+      titleEn: 'Giant Stars That Explode',
+      description: '아주 무거운 별은 마지막에 초신성으로 폭발합니다. 1987년에는 이웃 은하의 초신성이 맨눈으로 보였고, 에타 카리나는 언젠가 폭발할 별로 주목받고 있습니다.',
+      descriptionEn: 'Very massive stars end their lives as supernovae. In 1987 one in a neighbouring galaxy was visible to the naked eye, and Eta Carinae is watched as a star that will one day explode.',
+      tip: '',
+      featuredTiles: ['c_etacarinae', 'c_casa', 'c_sn1987a', 'c_crab'],
+    },
+    tileIds: ['c_etacarinae', 'c_casa', 'c_sn1987a', 'c_crab'],
+  },
+  // 블랙홀을 찾아서
+  {
+    chapterTitle: '블랙홀을 찾아서',
+    chapterTitleEn: 'Hunting for Black Holes',
+    defaultFailureRate: 97,
+    briefing: {
+      title: '블랙홀을 찾아서',
+      titleEn: 'Hunting for Black Holes',
+      description: '블랙홀은 보이지 않지만, 곁의 별에서 가스를 빨아들이거나 은하보다 긴 제트를 뿜으며 자신이 있다는 신호를 보냅니다.',
+      descriptionEn: 'Black holes are invisible, but they give themselves away by pulling gas from a nearby star or shooting jets longer than a whole galaxy.',
+      tip: '',
+      featuredTiles: ['c_cygx1', 'c_centaurusa', 'c_blackhole'],
+    },
+    tileIds: ['c_cygx1', 'c_centaurusa', 'c_blackhole'],
+  },
+  // 우리 은하의 작은 이웃
+  {
+    chapterTitle: '우리 은하의 작은 이웃',
+    chapterTitleEn: 'Our Galaxy’s Little Neighbours',
+    defaultFailureRate: 97,
+    briefing: {
+      title: '우리 은하의 작은 이웃',
+      titleEn: 'Our Galaxy’s Little Neighbours',
+      description: '남반구 밤하늘에는 두 개의 마젤란 은하가 구름처럼 떠 있습니다. 대마젤란 은하의 타란툴라 성운은 이웃 은하들 가운데 별이 가장 활발히 태어나는 곳입니다.',
+      descriptionEn: 'Two Magellanic Clouds float like clouds in the southern sky. The Tarantula Nebula in the larger one is the busiest star nursery among our neighbour galaxies.',
+      tip: '',
+      featuredTiles: ['c_smc', 'c_tarantula', 'c_lmc'],
+    },
+    tileIds: ['c_smc', 'c_tarantula', 'c_lmc'],
+  },
+  // 모양이 특별한 은하들
+  {
+    chapterTitle: '모양이 특별한 은하들',
+    chapterTitleEn: 'Galaxies with Unusual Shapes',
+    defaultFailureRate: 97,
+    briefing: {
+      title: '모양이 특별한 은하들',
+      titleEn: 'Galaxies with Unusual Shapes',
+      description: '은하는 바람개비처럼 펼쳐지기도 하고, 시가처럼 옆으로 보이기도 하며, 서로 부딪혀 더듬이를 뻗거나 먼지 띠로 멍든 눈처럼 보이기도 합니다.',
+      descriptionEn: 'Galaxies may spread like pinwheels, look like cigars seen edge-on, crash together and sprout antennae, or wear a dust lane like a black eye.',
+      tip: '',
+      featuredTiles: ['c_m101', 'c_m82', 'c_antennae', 'c_m64'],
+    },
+    tileIds: ['c_m101', 'c_m82', 'c_antennae', 'c_m64'],
+  },
+  // 별들의 무리, 성단
+  {
+    chapterTitle: '별들의 무리, 성단',
+    chapterTitleEn: 'Star Clusters',
+    defaultFailureRate: 97,
+    briefing: {
+      title: '별들의 무리, 성단',
+      titleEn: 'Star Clusters',
+      description: '별은 혼자가 아니라 무리 지어 태어납니다. 젊은 별이 느슨하게 모인 산개 성단과 오래된 별 수십만 개가 공처럼 뭉친 구상 성단을 만나 보세요.',
+      descriptionEn: 'Stars are born in groups. Meet loose open clusters of young stars and globular clusters, balls of hundreds of thousands of ancient stars.',
+      tip: '',
+      featuredTiles: ['c_hyades', 'c_omegacen', 'c_m13', 'c_jewelbox'],
+    },
+    tileIds: ['c_hyades', 'c_omegacen', 'c_m13', 'c_jewelbox'],
+  },
+  // 행성으로 떠난 긴 여행
+  {
+    chapterTitle: '행성으로 떠난 긴 여행',
+    chapterTitleEn: 'Long Voyages to the Planets',
+    defaultFailureRate: 97,
+    briefing: {
+      title: '행성으로 떠난 긴 여행',
+      titleEn: 'Long Voyages to the Planets',
+      description: '보이저 2호는 네 거대 행성을 모두 찾아갔고, 카시니호는 13년 동안 토성을 지켰으며, 파커 탐사선은 태양의 대기 속으로 뛰어들었습니다.',
+      descriptionEn: 'Voyager 2 visited all four giant planets, Cassini watched over Saturn for 13 years, and the Parker probe dived into the Sun’s atmosphere.',
+      tip: '',
+      featuredTiles: ['c_voyager2', 'c_cassini', 'c_parker'],
+    },
+    tileIds: ['c_voyager2', 'c_cassini', 'c_parker'],
+  },
+  // 화성 탐사대
+  {
+    chapterTitle: '화성 탐사대',
+    chapterTitleEn: 'The Mars Explorers',
+    defaultFailureRate: 97,
+    briefing: {
+      title: '화성 탐사대',
+      titleEn: 'The Mars Explorers',
+      description: '화성에서는 로버 큐리오시티와 퍼서비어런스가 옛 호수와 강의 흔적을 찾고 있고, 작은 헬리콥터 인저뉴어티는 다른 행성의 하늘을 처음으로 날았습니다.',
+      descriptionEn: 'On Mars the rovers Curiosity and Perseverance search for traces of ancient lakes and rivers, and the little helicopter Ingenuity made the first flight in another planet’s sky.',
+      tip: '',
+      featuredTiles: ['c_curiosity', 'c_perseverance', 'c_ingenuity', 'c_mars'],
+    },
+    tileIds: ['c_curiosity', 'c_perseverance', 'c_ingenuity', 'c_mars'],
+  },
+  // 우주 시대를 연 순간
+  {
+    chapterTitle: '우주 시대를 연 순간',
+    chapterTitleEn: 'Moments That Opened the Space Age',
+    defaultFailureRate: 97,
+    briefing: {
+      title: '우주 시대를 연 순간',
+      titleEn: 'Moments That Opened the Space Age',
+      description: '1957년 스푸트니크 1호가 첫 인공위성으로 지구를 돌았고, 12년 뒤 아폴로 11호의 두 우주비행사가 달에 첫발을 내디뎠습니다.',
+      descriptionEn: 'In 1957 Sputnik 1 became the first satellite to circle Earth, and twelve years later two Apollo 11 astronauts took the first steps on the Moon.',
+      tip: '',
+      featuredTiles: ['c_sputnik', 'c_apollo11', 'c_moon'],
+    },
+    tileIds: ['c_sputnik', 'c_apollo11', 'c_moon'],
   },
 ];
 
