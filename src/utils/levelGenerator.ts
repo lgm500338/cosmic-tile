@@ -1,4 +1,5 @@
 import { BoardTile, LevelConfig, RoadmapReward, ThemeId, TileThemeItem } from '../types/game';
+import { zoneForLevel, zoneOfTile, zoneOfChapter } from '../data/zones';
 import { GAME_THEMES } from '../data/themes';
 
 interface SlotPos {
@@ -1510,13 +1511,26 @@ export const CHAPTER_PRESETS: ChapterPreset[] = [
  * Every level features completely different celestial bodies, unique science briefings,
  * and mixed labeled/unlabeled tiles!
  */
+const zoneChapterCache: Record<number, ChapterPreset[]> = {};
+function chaptersOfZone(zone: number): ChapterPreset[] {
+  if (!zoneChapterCache[zone]) {
+    const list = CHAPTER_PRESETS.filter(c => zoneOfChapter(c.tileIds) === zone);
+    zoneChapterCache[zone] = list.length > 0 ? list : CHAPTER_PRESETS;
+  }
+  return zoneChapterCache[zone];
+}
+
 export function generateLevel(levelNum: number, currentThemeId?: ThemeId): {
   tiles: BoardTile[];
   config: LevelConfig;
   themeId: ThemeId;
 } {
-  const chapterIdx = (levelNum - 1) % CHAPTER_PRESETS.length;
-  const chapter = CHAPTER_PRESETS[chapterIdx];
+  // 거리 구간: 지구에서 가까운 천체 → 먼 천체 순으로 여행 (300레벨 한 바퀴, 301레벨부터 두 번째 여행)
+  const zoneInfo = zoneForLevel(levelNum);
+  const zoneChapters = chaptersOfZone(zoneInfo.zone.zone);
+  // 구간의 첫 레벨은 늘 그 구간의 첫 챕터, 두 번째 여행부터는 챕터 순서를 조금씩 바꾼다
+  const chapterOffset = zoneInfo.posInZone === 0 ? 0 : zoneInfo.posInZone + (zoneInfo.lap - 1) * 5;
+  const chapter = zoneChapters[chapterOffset % zoneChapters.length];
 
   const chapterTitle = chapter.chapterTitle;
   const failRate =
@@ -1592,14 +1606,21 @@ export function generateLevel(levelNum: number, currentThemeId?: ThemeId): {
   };
   prepareLayout(0);
 
+  // 챕터 천체 + 같은 구간의 천체로 채운다 (모자라면 바로 앞 구간 → 그래도 모자라면 전체)
+  const zoneNum = zoneInfo.zone.zone;
+  const zonePool = theme.tiles.filter(t => zoneOfTile(t.id) === zoneNum);
+  const prevPool = theme.tiles.filter(t => zoneOfTile(t.id) === zoneNum - 1);
   const pickTiles = (count: number) => {
     const list: TileThemeItem[] = [...chapterTiles];
-    let rotIdx = levelNum * 3;
-    while (list.length < count && list.length < theme.tiles.length) {
-      const candidate = theme.tiles[rotIdx % theme.tiles.length];
-      if (!list.some(t => t.id === candidate.id)) list.push(candidate);
-      rotIdx++;
-    }
+    const fillFrom = (pool: TileThemeItem[], start: number) => {
+      for (let k = 0; k < pool.length && list.length < count; k++) {
+        const candidate = pool[(start + k) % pool.length];
+        if (!list.some(t => t.id === candidate.id)) list.push(candidate);
+      }
+    };
+    fillFrom(zonePool, levelNum * 7);
+    fillFrom(prevPool, levelNum * 5);
+    fillFrom(theme.tiles, levelNum * 3);
     return list;
   };
   // 천체별 3개 묶음 개수: 모든 천체가 최소 1묶음, 나머지는 고르게 배분
@@ -1661,6 +1682,15 @@ export function generateLevel(levelNum: number, currentThemeId?: ThemeId): {
     failureRateText,
     failureRateTextEn: `${failRate}% of players failed this level. Beat the odds!`,
     briefing: levelBriefing,
+    zone: {
+      zone: zoneInfo.zone.zone,
+      lap: zoneInfo.lap,
+      nameKo: zoneInfo.zone.nameKo,
+      nameEn: zoneInfo.zone.nameEn,
+      distanceKo: zoneInfo.zone.distanceKo,
+      distanceEn: zoneInfo.zone.distanceEn,
+      isFirstLevel: zoneInfo.posInZone === 0,
+    },
     uniqueTypesCount,
     totalTriplets: tripletCount,
     layoutPattern,

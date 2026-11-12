@@ -34,6 +34,7 @@ const SOURCES = {
     files: id => [
       `https://cdn.esahubble.org/archives/images/wallpaper_mobile_qhd_plus/${id}.jpg`,
       `https://cdn.esahubble.org/archives/images/publicationjpg/${id}.jpg`,
+      `https://cdn.esahubble.org/archives/images/large/${id}.jpg`,
       `https://cdn.esahubble.org/archives/images/screen/${id}.jpg`,
     ],
   },
@@ -42,6 +43,7 @@ const SOURCES = {
     page: id => `https://esawebb.org/images/${id}/`,
     files: id => [
       `https://cdn.esawebb.org/archives/images/publicationjpg/${id}.jpg`,
+      `https://cdn.esawebb.org/archives/images/large/${id}.jpg`,
       `https://cdn.esawebb.org/archives/images/screen/${id}.jpg`,
     ],
   },

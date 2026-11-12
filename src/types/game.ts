@@ -76,6 +76,16 @@ export interface LevelConfig {
     tipEn?: string;
     featuredTiles: string[];
   };
+  /** 거리 구간 (지구에서 가까운 곳 → 먼 곳) */
+  zone?: {
+    zone: number;
+    lap: number;
+    nameKo: string;
+    nameEn: string;
+    distanceKo: string;
+    distanceEn: string;
+    isFirstLevel: boolean;
+  };
   uniqueTypesCount: number;
   totalTriplets: number;
   layoutPattern: 'flower' | 'butterfly' | 'star' | 'pyramid' | 'cross' | 'twin_towers' | 'diamond' | 'galaxy' | 'tutorial_grid';

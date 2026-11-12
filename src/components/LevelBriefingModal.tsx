@@ -73,6 +73,28 @@ export const LevelBriefingModal: React.FC<LevelBriefingModalProps> = ({
             <span>{t.briefingBadge(levelNumber)}</span>
           </div>
 
+          {/* 거리 구간: 지구에서 얼마나 멀리 왔는지 */}
+          {config.zone && (
+            <div className="flex flex-col items-center gap-1 mb-1.5">
+              {config.zone.isFirstLevel && (
+                <div className="px-3 py-1 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 text-slate-950 text-[11px] sm:text-xs font-black shadow-[0_0_18px_rgba(251,191,36,0.6)] animate-pulse">
+                  {language === 'ko'
+                    ? config.zone.zone === 1 && config.zone.lap > 1
+                      ? `🚀 ${config.zone.lap}번째 우주 여행 출발!`
+                      : `🚀 ${config.zone.zone}구간 진입!`
+                    : config.zone.zone === 1 && config.zone.lap > 1
+                      ? `🚀 Space Voyage #${config.zone.lap} begins!`
+                      : `🚀 Entering Zone ${config.zone.zone}!`}
+                </div>
+              )}
+              <div className="text-[11px] sm:text-xs font-bold text-amber-200/90 tracking-tight">
+                {language === 'ko'
+                  ? `${config.zone.lap > 1 ? `${config.zone.lap}번째 여행 · ` : ''}${config.zone.zone}구간 · ${config.zone.nameKo} (${config.zone.distanceKo})`
+                  : `${config.zone.lap > 1 ? `Voyage ${config.zone.lap} · ` : ''}Zone ${config.zone.zone} · ${config.zone.nameEn} (${config.zone.distanceEn})`}
+              </div>
+            </div>
+          )}
+
           <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight drop-shadow-md">
             {language === 'ko' ? briefing.title : briefing.titleEn || briefing.title}
           </h2>
