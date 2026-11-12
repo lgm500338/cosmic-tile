@@ -7,6 +7,7 @@ import { AlienFace, AlienKind, ALIEN_TILE_STYLE } from './AlienTile';
 import { uniquifySvgIds, useSvgSuffix } from '../utils/uniqueSvgIds';
 import { EXTRA_VIEWBOX, renderExtraArt } from './celestialArtExtra';
 import { MORE_VIEWBOX, renderMoreArt } from './celestialArtMore';
+import { FINAL_VIEWBOX, renderFinalArt } from './celestialArtFinal';
 
 interface JellyTileProps {
   item: TileThemeItem;
@@ -71,7 +72,7 @@ const TIGHT_VIEWBOX: Record<string, string> = {
  "sombrero": "2.5 2.5 39.0 39.0",
  "quasar": "2.5 2.5 39.0 39.0"
 };
-const vb = (symbolType: string) => TIGHT_VIEWBOX[symbolType] || EXTRA_VIEWBOX[symbolType] || MORE_VIEWBOX[symbolType] || '0 0 44 44';
+const vb = (symbolType: string) => TIGHT_VIEWBOX[symbolType] || EXTRA_VIEWBOX[symbolType] || MORE_VIEWBOX[symbolType] || FINAL_VIEWBOX[symbolType] || '0 0 44 44';
 
 // 비슷해 보이던 천체들의 색을 확실히 다르게 (회청색 공 6개, 빨간 공 3개, 노란 공 3개, 주황 공 3개, 혜성 2개)
 const SYMBOL_TINT: Record<string, string> = {
@@ -890,7 +891,7 @@ export const renderTileGraphic = (symbolType: string, _isCovered: boolean = fals
 
     default: {
       // 새로 추가한 56종: 같은 크기·같은 색 보정·같은 그림자로 그려 기존 타일과 느낌을 맞춘다
-      const extra = renderExtraArt(symbolType) || renderMoreArt(symbolType);
+      const extra = renderExtraArt(symbolType) || renderMoreArt(symbolType) || renderFinalArt(symbolType);
       if (extra) {
         return (
           <svg viewBox={vb(symbolType)} className={baseSvg} style={{ filter: (SYMBOL_TINT[symbolType] ? SYMBOL_TINT[symbolType] + ' ' : '') + filterStyle, overflow: 'visible' }}>

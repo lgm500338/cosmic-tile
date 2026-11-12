@@ -1233,6 +1233,275 @@ export const CHAPTER_PRESETS: ChapterPreset[] = [
       featuredTiles: ['c_sputnik', 'c_apollo11', 'c_moon'],
     },
     tileIds: ['c_sputnik', 'c_apollo11', 'c_moon'],
+  },  // 지구 하늘의 빛 쇼
+  {
+    chapterTitle: '지구 하늘의 빛 쇼',
+    chapterTitleEn: 'Light Shows in Earth’s Sky',
+    defaultFailureRate: 97,
+    briefing: {
+      title: '지구 하늘의 빛 쇼',
+      titleEn: 'Light Shows in Earth’s Sky',
+      description: '극지방의 밤하늘에는 초록빛 오로라 커튼이 춤추고, 달이 태양을 완전히 가리는 순간에는 낮이 밤처럼 어두워지며 하얀 코로나가 드러납니다.',
+      descriptionEn: 'Green curtains of aurora dance over the poles, and when the Moon fully covers the Sun, day turns to night and the white corona appears.',
+      tip: '',
+      featuredTiles: ['c_aurora', 'c_eclipse', 'c_sun', 'c_moon'],
+    },
+    tileIds: ['c_aurora', 'c_eclipse', 'c_sun', 'c_moon'],
+  },
+  // 처음 우주로 간 사람
+  {
+    chapterTitle: '처음 우주로 간 사람',
+    chapterTitleEn: 'The First Human in Space',
+    defaultFailureRate: 97,
+    briefing: {
+      title: '처음 우주로 간 사람',
+      titleEn: 'The First Human in Space',
+      description: '1961년 유리 가가린은 보스토크 1호를 타고 108분 동안 지구를 한 바퀴 돌았습니다. 지금은 우주정거장에서 사람들이 일 년 내내 살고 있습니다.',
+      descriptionEn: 'In 1961 Yuri Gagarin circled the Earth for 108 minutes aboard Vostok 1. Today people live aboard a space station all year round.',
+      tip: '',
+      featuredTiles: ['c_vostok', 'c_sputnik', 'c_iss', 'c_earth'],
+    },
+    tileIds: ['c_vostok', 'c_sputnik', 'c_iss', 'c_earth'],
+  },
+  // 화성의 거대한 화산
+  {
+    chapterTitle: '화성의 거대한 화산',
+    chapterTitleEn: 'The Giant Volcano of Mars',
+    defaultFailureRate: 97,
+    briefing: {
+      title: '화성의 거대한 화산',
+      titleEn: 'The Giant Volcano of Mars',
+      description: '화성에는 에베레스트산보다 두 배 넘게 높은 올림푸스 산이 솟아 있습니다. 붉은 땅 위에서는 로버들이 오늘도 바퀴 자국을 남기고 있습니다.',
+      descriptionEn: 'Olympus Mons, more than twice as tall as Everest, rises on Mars, where rovers are still leaving wheel tracks in the red soil.',
+      tip: '',
+      featuredTiles: ['c_olympus', 'c_mars', 'c_curiosity'],
+    },
+    tileIds: ['c_olympus', 'c_mars', 'c_curiosity'],
+  },
+  // 소행성에 다녀온 탐사선
+  {
+    chapterTitle: '소행성에 다녀온 탐사선',
+    chapterTitleEn: 'Probes That Visited Asteroids',
+    defaultFailureRate: 97,
+    briefing: {
+      title: '소행성에 다녀온 탐사선',
+      titleEn: 'Probes That Visited Asteroids',
+      description: '하야부사2와 오시리스-렉스는 소행성의 돌을 지구로 가져왔고, 다트는 소행성 디모르포스에 부딪혀 그 길을 바꾸는 데 성공했습니다.',
+      descriptionEn: 'Hayabusa2 and OSIRIS-REx brought asteroid rocks back to Earth, and DART crashed into Dimorphos and successfully changed its path.',
+      tip: '',
+      featuredTiles: ['c_hayabusa2', 'c_osirisrex', 'c_dart', 'c_didymos'],
+    },
+    tileIds: ['c_hayabusa2', 'c_osirisrex', 'c_dart', 'c_didymos'],
+  },
+  // 목성을 찾아간 탐사선
+  {
+    chapterTitle: '목성을 찾아간 탐사선',
+    chapterTitleEn: 'Probes That Visited Jupiter',
+    defaultFailureRate: 97,
+    briefing: {
+      title: '목성을 찾아간 탐사선',
+      titleEn: 'Probes That Visited Jupiter',
+      description: '파이어니어 10호가 처음 목성을 가까이서 찍었고, 갈릴레오호가 처음 목성 궤도를 돌았으며, 주노는 지금 목성의 극지방 위를 날며 거대한 오로라를 지켜보고 있습니다.',
+      descriptionEn: 'Pioneer 10 took the first close-up of Jupiter, Galileo was first to orbit it, and Juno now flies over its poles watching giant auroras.',
+      tip: '',
+      featuredTiles: ['c_pioneer10', 'c_galileo', 'c_juno', 'c_jupiteraurora'],
+    },
+    tileIds: ['c_pioneer10', 'c_galileo', 'c_juno', 'c_jupiteraurora'],
+  },
+  // 얼음 바다와 트로이 소행성을 향해
+  {
+    chapterTitle: '얼음 바다와 트로이 소행성을 향해',
+    chapterTitleEn: 'Toward Icy Oceans and Trojan Asteroids',
+    defaultFailureRate: 97,
+    briefing: {
+      title: '얼음 바다와 트로이 소행성을 향해',
+      titleEn: 'Toward Icy Oceans and Trojan Asteroids',
+      description: '유로파 클리퍼는 얼음 밑 바다가 있는 유로파로, 루시는 목성 궤도의 트로이 소행성들로 긴 여행을 떠났습니다.',
+      descriptionEn: 'Europa Clipper is on its way to Europa and its hidden ocean, and Lucy to the Trojan asteroids that share Jupiter’s orbit.',
+      tip: '',
+      featuredTiles: ['c_clipper', 'c_lucy', 'c_europa'],
+    },
+    tileIds: ['c_clipper', 'c_lucy', 'c_europa'],
+  },
+  // 토성 고리의 비밀
+  {
+    chapterTitle: '토성 고리의 비밀',
+    chapterTitleEn: 'Secrets of Saturn’s Rings',
+    defaultFailureRate: 97,
+    briefing: {
+      title: '토성 고리의 비밀',
+      titleEn: 'Secrets of Saturn’s Rings',
+      description: '토성의 고리는 대부분 얼음 조각입니다. 양치기 위성 프로메테우스와 판도라는 가느다란 고리를 붙잡고, 작은 다프니스는 고리에 물결을 만듭니다.',
+      descriptionEn: 'Saturn’s rings are mostly ice. Shepherd moons Prometheus and Pandora hold a thin ring in place, while tiny Daphnis makes waves.',
+      tip: '',
+      featuredTiles: ['c_saturnrings', 'c_prometheus', 'c_pandora', 'c_daphnis'],
+    },
+    tileIds: ['c_saturnrings', 'c_prometheus', 'c_pandora', 'c_daphnis'],
+  },
+  // 토성의 신기한 날씨
+  {
+    chapterTitle: '토성의 신기한 날씨',
+    chapterTitleEn: 'Saturn’s Strange Weather',
+    defaultFailureRate: 97,
+    briefing: {
+      title: '토성의 신기한 날씨',
+      titleEn: 'Saturn’s Strange Weather',
+      description: '토성 북극에는 육각형 모양의 바람이 불고, 위성 야누스와 에피메테우스는 4년마다 서로 자리를 바꿉니다.',
+      descriptionEn: 'A six-sided wind blows around Saturn’s north pole, and the moons Janus and Epimetheus swap places every four years.',
+      tip: '',
+      featuredTiles: ['c_hexagon', 'c_janus', 'c_saturn'],
+    },
+    tileIds: ['c_hexagon', 'c_janus', 'c_saturn'],
+  },
+  // 타이탄에 내려앉다
+  {
+    chapterTitle: '타이탄에 내려앉다',
+    chapterTitleEn: 'Landing on Titan',
+    defaultFailureRate: 97,
+    briefing: {
+      title: '타이탄에 내려앉다',
+      titleEn: 'Landing on Titan',
+      description: '하위헌스는 낙하산을 펴고 타이탄의 짙은 주황빛 대기를 뚫고 내려갔습니다. 타이탄의 북극에는 물이 아닌 메탄으로 된 바다 크라켄이 있습니다.',
+      descriptionEn: 'Huygens parachuted through Titan’s thick orange air. Near Titan’s north pole lies Kraken Mare, a sea made of methane, not water.',
+      tip: '',
+      featuredTiles: ['c_huygens', 'c_kraken', 'c_titan', 'c_cassini'],
+    },
+    tileIds: ['c_huygens', 'c_kraken', 'c_titan', 'c_cassini'],
+  },
+  // 푸른 얼음 거인의 비밀
+  {
+    chapterTitle: '푸른 얼음 거인의 비밀',
+    chapterTitleEn: 'Secrets of the Blue Ice Giants',
+    defaultFailureRate: 97,
+    briefing: {
+      title: '푸른 얼음 거인의 비밀',
+      titleEn: 'Secrets of the Blue Ice Giants',
+      description: '옆으로 누운 천왕성에는 가느다란 고리 13개가 있고, 해왕성에는 지구만 한 검은 폭풍이 나타났다가 사라졌습니다.',
+      descriptionEn: 'Sideways Uranus has 13 thin rings, and on Neptune an Earth-sized dark storm appeared and then vanished.',
+      tip: '',
+      featuredTiles: ['c_uranusrings', 'c_darkspot', 'c_uranus', 'c_neptune'],
+    },
+    tileIds: ['c_uranusrings', 'c_darkspot', 'c_uranus', 'c_neptune'],
+  },
+  // 명왕성의 푸른 하늘
+  {
+    chapterTitle: '명왕성의 푸른 하늘',
+    chapterTitleEn: 'Pluto’s Blue Sky',
+    defaultFailureRate: 97,
+    briefing: {
+      title: '명왕성의 푸른 하늘',
+      titleEn: 'Pluto’s Blue Sky',
+      description: '뉴호라이즌스가 뒤돌아 찍은 명왕성은 푸른 안개에 싸여 있었습니다. 곁에는 작은 위성 닉스와 히드라가 돌고, 더 멀리에는 길쭉한 바루나가 있습니다.',
+      descriptionEn: 'Looking back, New Horizons saw Pluto wrapped in blue haze, with little moons Nix and Hydra nearby and egg-shaped Varuna farther out.',
+      tip: '',
+      featuredTiles: ['c_plutohaze', 'c_nix', 'c_hydra', 'c_varuna'],
+    },
+    tileIds: ['c_plutohaze', 'c_nix', 'c_hydra', 'c_varuna'],
+  },
+  // 태양계의 가장 바깥
+  {
+    chapterTitle: '태양계의 가장 바깥',
+    chapterTitleEn: 'The Outermost Solar System',
+    defaultFailureRate: 97,
+    briefing: {
+      title: '태양계의 가장 바깥',
+      titleEn: 'The Outermost Solar System',
+      description: '태양에서 불어오는 바람은 태양권계면에서 멈추고, 그보다 훨씬 먼 곳에는 혜성들의 고향인 오르트 구름이 태양계를 감싸고 있다고 여겨집니다.',
+      descriptionEn: 'The Sun’s wind stops at the heliopause, and far beyond, the Oort Cloud — home of comets — is thought to wrap the Solar System.',
+      tip: '',
+      featuredTiles: ['c_heliopause', 'c_oort', 'c_voyager1'],
+    },
+    tileIds: ['c_heliopause', 'c_oort', 'c_voyager1'],
+  },
+  // 보이저가 남긴 선물
+  {
+    chapterTitle: '보이저가 남긴 선물',
+    chapterTitleEn: 'Voyager’s Gifts',
+    defaultFailureRate: 97,
+    briefing: {
+      title: '보이저가 남긴 선물',
+      titleEn: 'Voyager’s Gifts',
+      description: '보이저 1호는 60억 km 밖에서 뒤돌아 창백한 푸른 점이 된 지구를 찍었습니다. 보이저호에는 한국어 인사가 담긴 골든 레코드도 실려 있습니다.',
+      descriptionEn: 'From 6 billion km away Voyager 1 turned and photographed Earth as a pale blue dot. It also carries a Golden Record that includes a Korean greeting.',
+      tip: '',
+      featuredTiles: ['c_palebluedot', 'c_goldenrecord', 'c_voyager2'],
+    },
+    tileIds: ['c_palebluedot', 'c_goldenrecord', 'c_voyager2'],
+  },
+  // 태양의 가장 가까운 이웃
+  {
+    chapterTitle: '태양의 가장 가까운 이웃',
+    chapterTitleEn: 'The Sun’s Nearest Neighbours',
+    defaultFailureRate: 97,
+    briefing: {
+      title: '태양의 가장 가까운 이웃',
+      titleEn: 'The Sun’s Nearest Neighbours',
+      description: '알파 센타우리는 태양에서 가장 가까운 별 무리이고, 바너드 별은 하늘에서 가장 빨리 움직입니다. 시리우스 곁에는 지구만 한 하얀 별이 숨어 있습니다.',
+      descriptionEn: 'Alpha Centauri is the Sun’s nearest star system, Barnard’s Star moves fastest across the sky, and a tiny white star hides beside Sirius.',
+      tip: '',
+      featuredTiles: ['c_alphacen', 'c_barnard', 'c_siriusb', 'c_epseridani'],
+    },
+    tileIds: ['c_alphacen', 'c_barnard', 'c_siriusb', 'c_epseridani'],
+  },
+  // 별자리 길잡이
+  {
+    chapterTitle: '별자리 길잡이',
+    chapterTitleEn: 'Star Pattern Guides',
+    defaultFailureRate: 97,
+    briefing: {
+      title: '별자리 길잡이',
+      titleEn: 'Star Pattern Guides',
+      description: '북두칠성의 국자 끝을 따라가면 북극성이 보이고, 남반구에서는 남십자성이 남쪽을 알려 줍니다. 오리온의 허리띠에는 푸른 별 셋이 나란히 빛납니다.',
+      descriptionEn: 'Follow the Big Dipper’s pointer stars to Polaris; in the south, the Southern Cross shows the way. Three blue stars shine in Orion’s Belt.',
+      tip: '',
+      featuredTiles: ['c_bigdipper', 'c_mizar', 'c_orionbelt', 'c_crux', 'c_albireo'],
+    },
+    tileIds: ['c_bigdipper', 'c_mizar', 'c_orionbelt', 'c_crux', 'c_albireo'],
+  },
+  // 케플러가 찾은 행성들
+  {
+    chapterTitle: '케플러가 찾은 행성들',
+    chapterTitleEn: 'Worlds Found by Kepler',
+    defaultFailureRate: 97,
+    briefing: {
+      title: '케플러가 찾은 행성들',
+      titleEn: 'Worlds Found by Kepler',
+      description: '케플러 우주망원경은 별빛이 살짝 어두워지는 순간을 찾아 수천 개의 행성을 발견했습니다. 그중에는 해가 두 개 뜨는 행성도 있습니다.',
+      descriptionEn: 'The Kepler space telescope found thousands of planets by spotting stars dim ever so slightly — including one with two suns.',
+      tip: '',
+      featuredTiles: ['c_kepler186f', 'c_kepler452b', 'c_kepler16b'],
+    },
+    tileIds: ['c_kepler186f', 'c_kepler452b', 'c_kepler16b'],
+  },
+  // 불타는 외계 행성
+  {
+    chapterTitle: '불타는 외계 행성',
+    chapterTitleEn: 'Scorching Alien Worlds',
+    defaultFailureRate: 97,
+    briefing: {
+      title: '불타는 외계 행성',
+      titleEn: 'Scorching Alien Worlds',
+      description: '어떤 외계 행성은 별에 너무 가까워 용암처럼 뜨겁습니다. WASP-76b에서는 철로 된 비가 내릴 수 있다고 여겨집니다.',
+      descriptionEn: 'Some exoplanets hug their stars so closely they are lava-hot — and on WASP-76b, iron may even fall as rain.',
+      tip: '',
+      featuredTiles: ['c_55cnce', 'c_wasp76b', 'c_hd189733b'],
+    },
+    tileIds: ['c_55cnce', 'c_wasp76b', 'c_hd189733b'],
+  },
+  // 우주의 가장 깊은 곳
+  {
+    chapterTitle: '우주의 가장 깊은 곳',
+    chapterTitleEn: 'The Deepest Universe',
+    defaultFailureRate: 97,
+    briefing: {
+      title: '우주의 가장 깊은 곳',
+      titleEn: 'The Deepest Universe',
+      description: '허블은 작은 하늘 조각에서 1만 개의 은하를 찾았고, 우주 배경 복사는 우주가 아기였을 때의 빛입니다. 무거운 은하는 빛을 휘어 고리를 만듭니다.',
+      descriptionEn: 'Hubble found 10,000 galaxies in a tiny patch of sky, the cosmic background glow is light from the baby universe, and heavy galaxies bend light into rings.',
+      tip: '',
+      featuredTiles: ['c_hudf', 'c_cmb', 'c_einsteinring', 'c_stephan'],
+    },
+    tileIds: ['c_hudf', 'c_cmb', 'c_einsteinring', 'c_stephan'],
   },
 ];
 

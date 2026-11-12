@@ -9,6 +9,7 @@ export interface CelestialEnglishInfo {
 
 import { EXTRA_CELESTIAL_ENGLISH } from './celestialExtra';
 import { MORE_CELESTIAL_ENGLISH } from './celestialMore';
+import { FINAL_CELESTIAL_ENGLISH } from './celestialFinal';
 
 const BASE_CELESTIAL_ENGLISH: Record<string, CelestialEnglishInfo> = {
   c_mercury: {
@@ -365,4 +366,4 @@ const BASE_CELESTIAL_ENGLISH: Record<string, CelestialEnglishInfo> = {
   },
 };
 
-export const CELESTIAL_ENGLISH: Record<string, CelestialEnglishInfo> = { ...BASE_CELESTIAL_ENGLISH, ...EXTRA_CELESTIAL_ENGLISH, ...MORE_CELESTIAL_ENGLISH };
+export const CELESTIAL_ENGLISH: Record<string, CelestialEnglishInfo> = { ...BASE_CELESTIAL_ENGLISH, ...EXTRA_CELESTIAL_ENGLISH, ...MORE_CELESTIAL_ENGLISH, ...FINAL_CELESTIAL_ENGLISH };
