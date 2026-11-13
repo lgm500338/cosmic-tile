@@ -8,6 +8,7 @@ import { uniquifySvgIds, useSvgSuffix } from '../utils/uniqueSvgIds';
 import { EXTRA_VIEWBOX, renderExtraArt } from './celestialArtExtra';
 import { MORE_VIEWBOX, renderMoreArt } from './celestialArtMore';
 import { FINAL_VIEWBOX, renderFinalArt } from './celestialArtFinal';
+import { renderTwinkle } from './tileTwinkle';
 
 interface JellyTileProps {
   item: TileThemeItem;
@@ -96,7 +97,16 @@ const SYMBOL_TINT: Record<string, string> = {
 };
 
 // 천체 100종의 타일 그림 (기존 44종은 아래 switch, 새 56종은 celestialArtExtra.tsx)
-export const renderTileGraphic = (symbolType: string, _isCovered: boolean = false, emoji: string = '✨', size: 'sm' | 'md' | 'lg' = 'md') => {
+// 별·밤하늘 타일은 그림 위에 반짝이는 별빛을 겹친다 (tileTwinkle.tsx)
+export const renderTileGraphic = (symbolType: string, isCovered: boolean = false, emoji: string = '✨', size: 'sm' | 'md' | 'lg' = 'md') => {
+  const art = renderTileGraphicBase(symbolType, isCovered, emoji, size);
+  const tw = renderTwinkle(symbolType);
+  if (!tw || !React.isValidElement(art) || art.type !== 'svg') return art;
+  const el = art as React.ReactElement<{ children?: React.ReactNode }>;
+  return React.cloneElement(el, {}, ...React.Children.toArray(el.props.children), tw);
+};
+
+const renderTileGraphicBase = (symbolType: string, _isCovered: boolean = false, emoji: string = '✨', size: 'sm' | 'md' | 'lg' = 'md') => {
   // Retain identical vibrant colors whether in front or behind (user request 9: 타일 뒤에 있을 때 색이 달라지지 않도록 동일 유지)
   // 색을 진하고 또렷하게 (채도·명암 강화) + 타일에서 떠 보이는 그림자
   const filterStyle = 'saturate(2.2) contrast(1.32) brightness(0.96) drop-shadow(0 3px 4px rgba(0,0,0,0.38))';

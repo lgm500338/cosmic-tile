@@ -17,6 +17,7 @@ import { TRANSLATIONS } from '../data/translations';
 
 interface GameHUDProps {
   levelNumber: number;
+  isReplay?: boolean; // 이미 깬 단계를 다시 하는 중 (보상 없음)
   coins: number;
   earnedFloatingCoins: number;
   remainingTiles: number;
@@ -40,6 +41,7 @@ interface GameHUDProps {
 
 export const GameHUD: React.FC<GameHUDProps> = ({
   levelNumber,
+  isReplay = false,
   coins,
   earnedFloatingCoins,
   remainingTiles,
@@ -101,6 +103,14 @@ export const GameHUD: React.FC<GameHUDProps> = ({
             <span className="hidden min-[400px]:inline">{t.levelText(levelNumber)}</span>
             <span className="min-[400px]:hidden">Lv.{levelNumber}</span>
           </span>
+          {isReplay && (
+            <span
+              className="shrink-0 text-[9px] font-black px-1.5 py-0.5 rounded-full bg-slate-700 text-slate-200 border border-slate-500"
+              title={language === 'ko' ? '이미 깬 단계라 코인·보상이 없어요' : 'Already cleared — no coins or rewards'}
+            >
+              {language === 'ko' ? '다시하기' : 'Replay'}
+            </span>
+          )}
           <Info className="w-3 h-3 text-cyan-400 shrink-0 hidden min-[400px]:block" />
         </button>
 

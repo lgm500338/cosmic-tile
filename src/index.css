@@ -1,1 +1,18 @@
 @import "tailwindcss";
+
+/* 별 타일 반짝임: 별마다 다른 박자로 천천히 밝아졌다 어두워진다 */
+@keyframes tile-twinkle {
+  0%, 100% { opacity: 0.35; transform: scale(0.72); }
+  50% { opacity: 1; transform: scale(1.12); }
+}
+.tw-star {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation-name: tile-twinkle;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  will-change: opacity, transform;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tw-star { animation: none; opacity: 0.85; }
+}

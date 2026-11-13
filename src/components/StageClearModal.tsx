@@ -10,6 +10,7 @@ import { soundManager } from '../utils/audio';
 interface StageClearModalProps {
   levelNumber: number;
   earnedCoins: number;
+  isReplay?: boolean; // 이미 깬 단계를 다시 깬 경우 (보상 없음)
   language?: AppLanguage;
   onNextLevel: () => void;
   onReplay: () => void;
@@ -19,6 +20,7 @@ interface StageClearModalProps {
 export const StageClearModal: React.FC<StageClearModalProps> = ({
   levelNumber,
   earnedCoins,
+  isReplay = false,
   language = 'ko',
   onNextLevel,
   onReplay,
@@ -178,7 +180,7 @@ export const StageClearModal: React.FC<StageClearModalProps> = ({
         <div className="w-full bg-amber-500/10 border border-amber-400/30 rounded-xl p-2.5 mb-3 flex items-center justify-center gap-2">
           <span className="text-base">🪙</span>
           <span className="text-xs font-bold text-amber-200">
-            {t.clearBonus(earnedCoins)}
+            {isReplay ? t.replayNoBonus : t.clearBonus(earnedCoins)}
           </span>
         </div>
 

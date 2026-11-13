@@ -41,6 +41,11 @@ export default function App() {
     return saved ? parseInt(saved, 10) : 1;
   });
 
+  // 이미 깬 단계(최고 단계보다 앞)를 다시 하는 중인지 — 다시 할 때는 코인·보상이 전혀 없다
+  const isReplayLevel = levelNumber < highestUnlockedLevel;
+  // 방금 깬 단계가 다시 한 단계였는지 (클리어 창 표시용, 깬 직후 최고 단계가 올라가도 유지)
+  const [lastClearWasReplay, setLastClearWasReplay] = useState(false);
+
   // Coins balance
   const [coins, setCoins] = useState<number>(() => {
     const saved = localStorage.getItem('jelly_user_coins');
@@ -463,10 +468,13 @@ export default function App() {
 
       soundManager.playMatch(nextCombo);
 
-      const earnedCoins = 3 * nextCombo;
-      setCoins(c => c + earnedCoins);
-      setFloatingCoins(earnedCoins);
-      setTimeout(() => setFloatingCoins(0), 1200);
+      // 이미 깬 단계를 다시 할 때는 콤보 코인도 없다 (낮은 단계 반복으로 코인 모으기 방지)
+      if (!isReplayLevel) {
+        const earnedCoins = 3 * nextCombo;
+        setCoins(c => c + earnedCoins);
+        setFloatingCoins(earnedCoins);
+        setTimeout(() => setFloatingCoins(0), 1200);
+      }
 
       // 맞춘 3개 타일 자리에서 황금 줄기가 쏟아진다 (화면 전체 폭죽 대신)
       const matchedIdx = matched.map(m => dockTiles.findIndex(d => d.instanceId === m.instanceId)).filter(i => i >= 0);
@@ -512,7 +520,7 @@ export default function App() {
         return () => clearTimeout(defeatTimer);
       }
     }
-  }, [dockTiles, maxSlots, showGameOver, showStageClear, combo]);
+  }, [dockTiles, maxSlots, showGameOver, showStageClear, combo, isReplayLevel]);
 
   // Victory handler
   const handleVictory = useCallback(() => {
@@ -523,21 +531,25 @@ export default function App() {
     setMatchingIds([]);
     clearingIdsRef.current.clear();
 
-    // Reward for completing the level
-    const reward = getRoadmapRewardForLevel(levelNumber);
-    if (reward.rewardType === 'coins') {
-      setCoins(c => c + reward.amount);
-    } else {
-      const bType = reward.rewardType as BoosterType;
-      setBoosters(b => ({ ...b, [bType]: b[bType] + reward.amount }));
-    }
+    // 이미 깬 단계를 다시 깬 경우: 단계 보상·클리어 보너스 모두 없음
+    setLastClearWasReplay(isReplayLevel);
+    if (!isReplayLevel) {
+      // Reward for completing the level
+      const reward = getRoadmapRewardForLevel(levelNumber);
+      if (reward.rewardType === 'coins') {
+        setCoins(c => c + reward.amount);
+      } else {
+        const bType = reward.rewardType as BoosterType;
+        setBoosters(b => ({ ...b, [bType]: b[bType] + reward.amount }));
+      }
 
-    const stageClearCoins = 50 + Math.min(levelNumber * 5, 200);
-    setCoins(c => c + stageClearCoins);
+      const stageClearCoins = 50 + Math.min(levelNumber * 5, 200);
+      setCoins(c => c + stageClearCoins);
+    }
 
     setHighestUnlockedLevel(prev => Math.max(prev, levelNumber + 1));
     setShowStageClear(true);
-  }, [levelNumber]);
+  }, [levelNumber, isReplayLevel]);
 
   // Automated Victory Detector: Triggers ONLY when board is empty AND dock is completely empty
   useEffect(() => {
@@ -751,6 +763,7 @@ export default function App() {
         {/* 1. Header HUD (Level, Coins, Quests, Attendance, Settings) */}
         <GameHUD
           levelNumber={levelNumber}
+          isReplay={isReplayLevel && !showStageClear}
           coins={coins}
           earnedFloatingCoins={floatingCoins}
           remainingTiles={remainingTilesCount}
@@ -829,7 +842,8 @@ export default function App() {
       {showStageClear && (
         <StageClearModal
           levelNumber={levelNumber}
-          earnedCoins={50 + Math.min(levelNumber * 5, 200)}
+          earnedCoins={lastClearWasReplay ? 0 : 50 + Math.min(levelNumber * 5, 200)}
+          isReplay={lastClearWasReplay}
           language={language}
           onNextLevel={() => {
             const nextLvl = levelNumber + 1;

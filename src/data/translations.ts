@@ -24,6 +24,7 @@ export interface Translations {
   phaseCompleted: string;
   remainingInPhase: (rem: number) => string;
   clearBonus: (coins: number) => string;
+  replayNoBonus: string;
   nextLevelBtn: (lvl: number) => string;
   phaseCompleteNextBtn: (lvl: number) => string;
   viewAllQuests: string;
@@ -103,6 +104,7 @@ export const TRANSLATIONS: Record<AppLanguage, Translations> = {
     phaseCompleted: '🎉 10레벨 완주 완료!',
     remainingInPhase: rem => `앞으로 ${rem}개 남음`,
     clearBonus: coins => `클리어 보너스 지급: +${coins} 코인`,
+    replayNoBonus: '이미 깬 단계라 코인·보상이 없어요',
     nextLevelBtn: lvl => `다음 레벨 ${lvl} 도전`,
     phaseCompleteNextBtn: lvl => `10레벨 완주! 레벨 ${lvl} 도전`,
     viewAllQuests: '10레벨 일일도전과제 전체 보기',
@@ -181,6 +183,7 @@ export const TRANSLATIONS: Record<AppLanguage, Translations> = {
     phaseCompleted: '🎉 10-Level Journey Complete!',
     remainingInPhase: rem => `${rem} more to complete`,
     clearBonus: coins => `Stage Clear Bonus: +${coins} Coins`,
+    replayNoBonus: 'Already cleared — no coins or rewards on replay',
     nextLevelBtn: lvl => `Play Level ${lvl}`,
     phaseCompleteNextBtn: lvl => `Expedition Done! Start Level ${lvl}`,
     viewAllQuests: 'View 10-Level Daily Quests',
