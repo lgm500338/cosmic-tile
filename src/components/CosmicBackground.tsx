@@ -724,12 +724,24 @@ export const CosmicBackground: React.FC<CosmicBackgroundProps> = ({ levelNumber 
         const iw = photo.naturalWidth, ih = photo.naturalHeight;
         // 어지럽지 않도록 아주 천천히 (약 2분 주기), 확대 폭도 작게
         const tp = t + phase;
-        const zoom = (lap === 0 ? 1.06 : 1.12) + 0.07 * (0.5 + 0.5 * Math.sin(tp * 0.045));
-        const s0 = Math.max(W / iw, H / ih) * zoom;
+        // 사진 비율이 화면과 비슷하면 남는 여백이 없어 거의 멈춰 보였다.
+        // 그래서 모든 사진이 같은 정도로 움직이도록, 움직일 거리(화면 기준)를 먼저 정하고
+        // 모자라면 조금 더 확대해서 여백을 만들고, 그래도 모자라면 흐르는 속도를 올린다.
+        const base = Math.max(W / iw, H / ih);
+        const targetMove = Math.max(W, H) * 0.3; // 모든 사진의 최소 이동 폭 (잘 움직이던 사진과 같은 정도)
+        const zoomStart = lap === 0 ? 1.06 : 1.12;
+        // 가로·세로 중 여백 만들기 쉬운 쪽으로 필요한 확대 배율
+        const needX = (W + (2 * targetMove) / 0.6) / (iw * base);
+        const needY = (H + (2 * targetMove) / 0.6) / (ih * base);
+        const zoomMin = Math.min(1.45, Math.max(zoomStart, Math.min(needX, needY)));
+        const zoom = zoomMin + 0.07 * (0.5 + 0.5 * Math.sin(tp * 0.045));
+        const s0 = base * zoom;
         const dw = iw * s0, dh = ih * s0;
         const mxp = (dw - W) / 2, myp = (dh - H) / 2;
-        const px = dirX * Math.sin(tp * 0.032) * mxp * 0.6;
-        const py = dirY * Math.cos(tp * 0.026) * myp * 0.6;
+        const moveNow = 0.6 * Math.max((iw * base * zoomMin - W) / 2, (ih * base * zoomMin - H) / 2);
+        const speedUp = moveNow > 1 ? Math.min(2.5, Math.max(1, targetMove / moveNow)) : 2.5;
+        const px = dirX * Math.sin(tp * 0.032 * speedUp) * mxp * 0.6;
+        const py = dirY * Math.cos(tp * 0.026 * speedUp) * myp * 0.6;
         ctx.globalAlpha = photoAlpha;
         if (photoFlip) {
           ctx.save();
