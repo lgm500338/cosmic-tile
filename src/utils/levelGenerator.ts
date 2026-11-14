@@ -563,7 +563,24 @@ function getDifficulty(levelNum: number): AssignOptions {
   if (levelNum <= 9) return { maxVisible: 3, maxOpen: 4, attempts: 200, preferTriple: true };
   if (levelNum <= 50) return { maxVisible: 3, maxOpen: 5, attempts: 200, preferTriple: true };
   // 51레벨부터: 처음엔 3개가 다 보이지 않아도, 위 타일을 한두 개 걷어내면 짝 3개가 모이게
-  return { maxVisible: 3, maxOpen: 5, attempts: 300, preferTriple: true, groupWindow: 3 };
+  if (levelNum < HARD_START_LEVEL) return { maxVisible: 3, maxOpen: 5, attempts: 300, preferTriple: true, groupWindow: 3 };
+  // 200레벨~: 같은 천체 3개가 한꺼번에 보이지 않게(최대 2개), 짝이 조금 더 깊이 숨는다
+  if (levelNum < 250) return { maxVisible: 3, maxOpen: 5, attempts: 300, preferSingle: true, groupWindow: 4 };
+  // 250레벨~: 짝이 더 깊이 숨고 슬롯을 더 오래 써야 한다
+  if (levelNum < 300) return { maxVisible: 3, maxOpen: 6, attempts: 300, preferSingle: true, groupWindow: 5 };
+  // 300레벨~(두 번째 여행부터): 같은 천체가 1개만 보이는 배치를 최대한 우선
+  return { maxVisible: 3, maxOpen: 6, attempts: 300, preferSingle: true, groupWindow: 6 };
+}
+
+/** 이 레벨부터 난이도가 한 단계 더 올라간다 (천체 종류 추가 + 같은 천체 동시 노출 줄이기) */
+export const HARD_START_LEVEL = 200;
+
+/** 200레벨부터 한 판에 나오는 천체 종류를 더 늘린다 → 같은 그림이 덜 반복되어 짝 찾기가 어려워진다 */
+function extraTypesForLevel(levelNum: number): number {
+  if (levelNum < HARD_START_LEVEL) return 0;
+  if (levelNum < 250) return 3;
+  if (levelNum < 300) return 5;
+  return 6;
 }
 
 export interface ChapterPreset {
@@ -1579,7 +1596,7 @@ export function generateLevel(levelNum: number, currentThemeId?: ThemeId): {
     // 6~9: 7종, 10~19: 8~9종, 20~39: 9~10종, 40+: 10~11종
     // 종류가 많아야 "같은 천체는 한 번에 1~2개만 보이기" 규칙을 지킬 수 있다
     const base = levelNum < 10 ? 8 : levelNum < 20 ? 10 : levelNum < 40 ? 13 : 15;
-    uniqueTypesCount = base + (levelNum % 2);
+    uniqueTypesCount = base + (levelNum % 2) + extraTypesForLevel(levelNum);
   }
 
   const layoutPattern: LevelConfig['layoutPattern'] =
