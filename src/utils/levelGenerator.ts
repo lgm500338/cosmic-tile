@@ -123,8 +123,11 @@ function getLayoutTarget(levelNum: number) {
   if (levelNum <= 19) return { minN: 48, maxN: 75, minF: 12, maxF: 18, W: [5, 5], H: [6, 7], L: [4, 5] };
   if (levelNum <= 30) return { minN: 57, maxN: 84, minF: 12, maxF: 18, W: [5, 5], H: [6, 7], L: [5, 5] };
   if (levelNum <= 60) return { minN: 60, maxN: 90, minF: 12, maxF: 20, W: [5, 6], H: [6, 7], L: [5, 5] };
-  if (levelNum <= 100) return { minN: 66, maxN: 96, minF: 12, maxF: 20, W: [6, 7], H: [6, 8], L: [5, 5] };
+  // 61레벨~300레벨: 가로가 7칸으로 넓어지면 그 판만 타일이 갑자기 작아진다 → 가로 폭(maxSpanX)을 6칸 폭까지로 묶고 세로로 더 쌓는다
+  if (levelNum <= 100) return { minN: 66, maxN: 96, minF: 12, maxF: 20, W: [5, 6], H: [7, 8], L: [5, 5], minLayers: 3, maxSpanX: 5 };
   // 101레벨~: 2~3층으로 얕게 끝나는 판을 막고 4~5층을 꼭 쌓는다 → 뒤쪽 타일이 살짝만 보이는 곳이 생긴다
+  if (levelNum <= SAME_SPOT_STACK_LEVEL) return { minN: 69, maxN: 105, minF: 11, maxF: 19, W: [5, 6], H: [7, 8], L: [5, 5], minLayers: 4, maxSpanX: 5 };
+  // 300레벨 이후(두 번째 여행~)는 고난도 구간이라 넓은 판(가로 7칸)도 나온다 → 이때는 타일이 조금 작아질 수 있다
   return { minN: 69, maxN: 105, minF: 11, maxF: 19, W: [6, 7], H: [6, 8], L: [5, 5], minLayers: 4 };
 }
 
@@ -204,6 +207,7 @@ function generateLayoutSlots(levelNum: number, variant = 0): SlotPos[] {
   // 같은 모양으로 두 번 실패하면 다음 모양으로 넘어간다
   const baseShapeIdx = levelNum - 6 + Math.floor(variant / 2);
   const minLayers = (target as { minLayers?: number }).minLayers ?? 0;
+  const maxSpanX = (target as { maxSpanX?: number }).maxSpanX ?? Infinity;
   const pick = (range: number[]) => range[0] + Math.floor(rand() * (range[1] - range[0] + 1));
 
   let best: SlotPos[] = [];
@@ -226,7 +230,11 @@ function generateLayoutSlots(levelNum: number, variant = 0): SlotPos[] {
     const n = slots.length;
     const f = countSeen(slots);
     const layersUsed = Math.max(...slots.map(s => s.layer)) + 1;
+    const xs = slots.map(s => s.x);
+    const spanX = Math.max(...xs) - Math.min(...xs);
     const score =
+      // 가로 폭이 넓으면 화면에 맞추느라 타일이 작아지므로 반드시 피한다
+      Math.max(0, spanX - maxSpanX) * 1000 +
       Math.max(0, target.minN - n) * 2 + Math.max(0, n - target.maxN) * 2 +
       Math.max(0, target.minF - f) * 5 + Math.max(0, f - target.maxF) * 5 +
       Math.max(0, target.L[0] - layersUsed) * 10 +
